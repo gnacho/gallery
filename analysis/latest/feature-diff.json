@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "baseline": {
+    "version_name": "152.0.10.794",
+    "matrix": "analysis/original/feature-matrix.json",
+    "feature_count": 63,
+    "features_preserved_by_reference": true
+  },
+  "candidate": {
+    "reported_version_name": "152.0.10.882",
+    "status": "no-public-download-found",
+    "binary_compared": false,
+    "reason": "No public downloadable APK was found for the reported newer version. Community reports are not binary evidence."
+  },
+  "documented_additions": [
+    {
+      "id": "N001",
+      "name": "Busqueda por nombre de archivo y notas",
+      "related_baseline": ["F006", "F007"],
+      "source_ids": ["S007", "S008"],
+      "implementation_class": "local_candidate",
+      "status": "documented_external",
+      "planned_behavior": "Incluir nombre de archivo y notas locales en el indice de busqueda, sin afirmar paridad con el APK no obtenido."
+    },
+    {
+      "id": "N002",
+      "name": "Niveles de velocidad de reproduccion de video",
+      "related_baseline": ["F014"],
+      "source_ids": ["S007", "S008"],
+      "implementation_class": "local_candidate",
+      "status": "documented_external",
+      "planned_behavior": "Exponer velocidades discretas en el reproductor y conservar audio cuando la plataforma lo permita."
+    },
+    {
+      "id": "N003",
+      "name": "Lupa en dibujo, mosaico y borrado",
+      "related_baseline": ["F044"],
+      "source_ids": ["S007", "S008"],
+      "implementation_class": "local_candidate",
+      "status": "documented_external",
+      "planned_behavior": "Mostrar una lupa al arrastrar herramientas de edicion local."
+    },
+    {
+      "id": "N004",
+      "name": "Marca de agua de noche lunar",
+      "related_baseline": [],
+      "source_ids": ["S007", "S008"],
+      "implementation_class": "local_candidate",
+      "status": "documented_external",
+      "planned_behavior": "Ofrecer una composicion local exportable, sin copiar recursos protegidos no esenciales."
+    },
+    {
+      "id": "N005",
+      "name": "Optimizacion de busqueda de imagenes WeChat",
+      "related_baseline": ["F006"],
+      "source_ids": ["S007", "S008"],
+      "implementation_class": "device_specific",
+      "status": "documented_external",
+      "planned_behavior": "Indexar buckets visibles mediante MediaStore. No afirmar integracion especifica sin WeChat y una version verificable."
+    },
+    {
+      "id": "N006",
+      "name": "Resumen anual",
+      "related_baseline": ["F010", "F011"],
+      "source_ids": ["S007", "S008"],
+      "implementation_class": "local_candidate",
+      "status": "documented_external",
+      "planned_behavior": "Generar localmente una coleccion anual con estadisticas y reproduccion."
+    },
+    {
+      "id": "N007",
+      "name": "Moving Photo Collage",
+      "related_baseline": ["F015"],
+      "source_ids": ["S010"],
+      "implementation_class": "device_specific",
+      "status": "documented_external",
+      "planned_behavior": "Admitir fuentes de movimiento compatibles cuando existan y mantener collage estatico como alternativa."
+    },
+    {
+      "id": "N008",
+      "name": "AI Image to Video",
+      "related_baseline": ["F013"],
+      "source_ids": ["S009"],
+      "implementation_class": "service_dependent",
+      "status": "documented_external",
+      "planned_behavior": "No sustituir el servicio Honor por una animacion local presentada como equivalente."
+    },
+    {
+      "id": "N009",
+      "name": "AI Magic Retouch, AI Eraser y AI De-reflection",
+      "related_baseline": ["F044"],
+      "source_ids": ["S011", "S012", "S013"],
+      "implementation_class": "service_dependent",
+      "status": "documented_external",
+      "planned_behavior": "Separar edicion local de funciones Honor que requieren modelos, servicios o hardware no redistribuibles."
+    },
+    {
+      "id": "N010",
+      "name": "AI Photos Agent",
+      "related_baseline": ["F006"],
+      "source_ids": ["S014"],
+      "implementation_class": "service_dependent",
+      "status": "documented_external",
+      "planned_behavior": "No prometer el agente MagicOS como una funcion local del clon."
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "checked_at": "2026-10-31T00:42:40+01:00",
+  "package_name": "com.hihonor.photos",
+  "baseline": {
+    "version_name": "152.0.10.794",
+    "version_code": 1520010794,
+    "sha256": "2e8a8a89d6a9910210986935e4c01f46d3d6190936b9771520e3a13492e6ee86",
+    "source": "analysis/original/rea/inspect-android-package.json"
+  },
+  "reported_latest": {
+    "version_name": "152.0.10.882",
+    "status": "community-report-only",
+    "apk_path": null,
+    "download_verified": false,
+    "signature_verified": false
+  },
+  "candidate_status": "no-public-download-found",
+  "sources": [
+    {
+      "id": "S001",
+      "kind": "community",
+      "title": "Gallery app update",
+      "url": "https://www.reddit.com/r/Honor/comments/1thqhq2/gallery_app_update/",
+      "retrieval": "websearch and public page",
+      "result": "A user reports receiving 152.0.10.882 through Honor Store.",
+      "credibility": "low-for-binary-provenance, useful-as-version-lead",
+      "provides_apk": false
+    },
+    {
+      "id": "S002",
+      "kind": "community",
+      "title": "Stock Gallery app is struggling Magic 7 Pro",
+      "url": "https://www.reddit.com/r/Honor/comments/1to4998/stock_gallery_app_is_struggling_magic_7_pro/",
+      "retrieval": "websearch and public page",
+      "result": "A second community mention of 152.0.10.882, without a downloadable binary.",
+      "credibility": "low-for-binary-provenance, useful-as-version-lead",
+      "provides_apk": false
+    },
+    {
+      "id": "S003",
+      "kind": "apk-index",
+      "title": "APKMirror Honor developer index",
+      "url": "https://www.apkmirror.com/apk/honor/",
+      "retrieval": "webfetch",
+      "result": "No Honor Gallery package listing found in the available index.",
+      "credibility": "established-third-party-index, negative-result-not-proof-of-absence",
+      "provides_apk": false
+    },
+    {
+      "id": "S004",
+      "kind": "apk-index",
+      "title": "APKPure package search",
+      "url": "https://apkpure.com/search?q=com.hihonor.photos",
+      "retrieval": "webfetch",
+      "result": "Search did not return com.hihonor.photos and the direct package page returned 404.",
+      "credibility": "third-party-index, negative-result-not-proof-of-absence",
+      "provides_apk": false
+    },
+    {
+      "id": "S005",
+      "kind": "apk-index",
+      "title": "Uptodown Honor Gallery",
+      "url": "https://honor-gallery.en.uptodown.com/android",
+      "retrieval": "webfetch",
+      "result": "HTTP 404.",
+      "credibility": "third-party-index, negative-result-not-proof-of-absence",
+      "provides_apk": false
+    },
+    {
+      "id": "S006",
+      "kind": "package-index",
+      "title": "IconPusher com.hihonor.photos",
+      "url": "https://iconpusher.com/package/com.hihonor.photos",
+      "retrieval": "webfetch",
+      "result": "Only an old icon entry for 15.0.1.450-ovs was found, not a newer Gallery APK.",
+      "credibility": "third-party-package-index",
+      "provides_apk": false
+    },
+    {
+      "id": "S007",
+      "kind": "secondary-report",
+      "title": "Honor Gallery update plan",
+      "url": "https://www.ithome.com/0/856/429.htm",
+      "retrieval": "websearch and webfetch",
+      "result": "Reports a May 2025 plan attributed to an Honor product manager: filename and notes search, video speed levels, editing magnifier, lunar night watermark, WeChat image search, annual review and stability work.",
+      "credibility": "established-secondary-source, not-an-apk",
+      "provides_apk": false
+    },
+    {
+      "id": "S008",
+      "kind": "secondary-report",
+      "title": "Honor unlocks new MagicOS Gallery features",
+      "url": "https://www.huaweicentral.com/honor-unlocks-new-magicos-gallery-app-features-for-flagship-devices/",
+      "retrieval": "websearch and webfetch",
+      "result": "Independent secondary coverage of the same Gallery feature plan.",
+      "credibility": "secondary-source, not-an-apk",
+      "provides_apk": false
+    },
+    {
+      "id": "S009",
+      "kind": "official",
+      "title": "Honor AI Image to Video",
+      "url": "https://www.honor.com/global/support/content/en-us15880870/",
+      "retrieval": "websearch and official webfetch",
+      "result": "Official support entry for AI Image to Video on compatible devices.",
+      "credibility": "primary-source, device-and-service-dependent",
+      "provides_apk": false
+    },
+    {
+      "id": "S010",
+      "kind": "official",
+      "title": "Honor Moving Photo Collage",
+      "url": "https://www.honor.com/global/support/content/en-us15880518/",
+      "retrieval": "websearch and official webfetch",
+      "result": "Official support entry for Moving Photo Collage on compatible devices.",
+      "credibility": "primary-source, device-dependent",
+      "provides_apk": false
+    },
+    {
+      "id": "S011",
+      "kind": "official",
+      "title": "Honor AI Magic Retouch",
+      "url": "https://www.honor.com/global/support/content/en-us15882722/",
+      "retrieval": "websearch and official webfetch",
+      "result": "Official support entry for AI Magic Retouch.",
+      "credibility": "primary-source, device-and-service-dependent",
+      "provides_apk": false
+    },
+    {
+      "id": "S012",
+      "kind": "official",
+      "title": "Honor AI Eraser",
+      "url": "https://www.honor.com/global/support/content/en-us15868499/",
+      "retrieval": "websearch and official webfetch",
+      "result": "Official support entry for AI Eraser.",
+      "credibility": "primary-source, device-and-service-dependent",
+      "provides_apk": false
+    },
+    {
+      "id": "S013",
+      "kind": "official",
+      "title": "Honor Magic V5 AI De-reflection",
+      "url": "https://www.honor.com/global/phones/honor-magic-v5/tips/007/",
+      "retrieval": "websearch and official webfetch",
+      "result": "Official Magic V5 guidance for AI De-reflection.",
+      "credibility": "primary-source, model-specific",
+      "provides_apk": false
+    },
+    {
+      "id": "S014",
+      "kind": "official",
+      "title": "Honor MagicOS 10",
+      "url": "https://www.honor.com/global/magic-os/",
+      "retrieval": "websearch and official webfetch",
+      "result": "Official MagicOS material references AI Photos Agent. It does not establish that the feature exists in the baseline APK or works without Honor services.",
+      "credibility": "primary-source, platform-and-service-dependent",
+      "provides_apk": false
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Galería Kotlin</string>
+    <string name="back">Atrás</string>
+    <string name="retry">Reintentar</string>
+    <string name="permission_title">Permite el acceso a tus fotos</string>
+    <string name="permission_message">Galería necesita acceso a imágenes o vídeos para mostrar tu contenido. Puedes concederlo de nuevo desde este botón.</string>
+    <string name="empty_title">No hay fotos ni vídeos</string>
+    <string name="empty_message">El contenido disponible en MediaStore aparecerá aquí.</string>
+    <string name="loading">Cargando tu galería</string>
+    <string name="media_load_error">No se pudo leer el contenido. Comprueba los permisos y vuelve a intentarlo.</string>
+    <string name="undated">Sin fecha</string>
+    <string name="album_items">%1$d elementos</string>
+    <string name="photo_thumbnail">Miniatura de %1$s</string>
+    <string name="video_duration">Duración del vídeo</string>
+    <string name="photos">Fotos</string>
+    <string name="gallery">Galería</string>
+    <string name="memories">Recuerdos</string>
+    <string name="create">Crear</string>
+    <string name="albums">Álbumes</string>
+    <string name="memories_empty">No hay recuerdos generados en este dispositivo.</string>
+    <string name="create_empty">Las herramientas de creación se añadirán con sus pruebas funcionales.</string>
+</resources>

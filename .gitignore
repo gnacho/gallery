@@ -1,0 +1,25 @@
+# Gradle
+.gradle/
+build/
+app/build/
+
+# Android / local
+local.properties
+*.apk
+*.aab
+*.zip
+*.keystore
+*.jks
+
+# IDE
+.idea/
+*.iml
+.kotlin/
+
+# Analysis artifacts (decompiled Honor material, captures, APKs)
+analysis/original/
+verification/
+
+# Agent/tooling scratch
+.unlazy/
+.impeccable/

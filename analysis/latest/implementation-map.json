@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "source": "analysis/latest/feature-diff.json",
+  "candidateVersionStatus": "community-report-only-no-public-apk",
+  "statusDefinitions": {
+    "verified": "Core behavior has focused JVM or native-rendering tests and the Android build passes. It does not mean device validation.",
+    "implemented": "The real local implementation compiles, but its decisive Android runtime behavior still needs device validation.",
+    "blocked": "The documented Honor feature is not reproduced. A limitation or non-equivalent fallback is stated explicitly."
+  },
+  "features": [
+    {
+      "id": "N001",
+      "status": "verified",
+      "implementationEvidence": ["app/src/main/java/app/galeria/data/MediaSearch.kt", "app/src/main/java/app/galeria/data/MediaNotesStore.kt", "app/src/main/java/app/galeria/ui/MediaViewer.kt", "app/src/main/java/app/galeria/ui/TimelineScreen.kt", "app/src/test/java/app/galeria/data/MediaSearchTest.kt", "app/src/test/java/app/galeria/data/MediaNotesStoreTest.kt"],
+      "verification": ["./gradlew testDebugUnitTest --tests app.galeria.data.MediaSearchTest --tests app.galeria.data.MediaNotesStoreTest --no-daemon"],
+      "limitations": "Notes are local app metadata, not Honor's unavailable .882 implementation."
+    },
+    {
+      "id": "N002",
+      "status": "implemented",
+      "implementationEvidence": ["app/src/main/java/app/galeria/data/PlaybackSpeed.kt", "app/src/main/java/app/galeria/ui/MediaViewer.kt"],
+      "verification": ["./gradlew testDebugUnitTest --tests app.galeria.data.PlaybackSpeedTest --no-daemon", "./gradlew assembleDebug lintDebug --no-daemon"],
+      "limitations": "ExoPlayer applies 0.5x, 1x, 1.5x and 2x. Actual audio and playback on Android remain unverified."
+    },
+    {
+      "id": "N003",
+      "status": "implemented",
+      "implementationEvidence": ["app/src/main/java/app/galeria/ui/EditorScreen.kt"],
+      "verification": ["./gradlew assembleDebug lintDebug --no-daemon"],
+      "limitations": "Uses the real Compose magnifier at 3x during draw and mosaic drags. Touch behavior and the erase workflow still need Android validation."
+    },
+    {
+      "id": "N004",
+      "status": "verified",
+      "implementationEvidence": ["app/src/main/java/app/galeria/data/ImageEditState.kt", "app/src/main/java/app/galeria/data/ImageEditorRenderer.kt", "app/src/main/java/app/galeria/ui/EditorScreen.kt", "app/src/test/java/app/galeria/data/ImageEditorRendererTest.kt"],
+      "verification": ["./gradlew testDebugUnitTest --tests app.galeria.data.ImageEditorRendererTest --no-daemon"],
+      "limitations": "Original local crescent-and-text composition, not a copy of protected Honor artwork."
+    },
+    {
+      "id": "N005",
+      "status": "implemented",
+      "implementationEvidence": ["app/src/main/java/app/galeria/data/MediaSearch.kt", "app/src/main/java/app/galeria/data/MediaStoreQuery.kt"],
+      "verification": ["./gradlew testDebugUnitTest --tests app.galeria.data.MediaSearchTest --no-daemon"],
+      "limitations": "All visible MediaStore buckets are searchable, including WeChat when present. No WeChat-specific optimization is claimed."
+    },
+    {
+      "id": "N006",
+      "status": "verified",
+      "implementationEvidence": ["app/src/main/java/app/galeria/data/AnnualReview.kt", "app/src/main/java/app/galeria/ui/AnnualReviewScreen.kt", "app/src/main/java/app/galeria/ui/MemoriesCreateScreens.kt", "app/src/test/java/app/galeria/data/AnnualReviewTest.kt"],
+      "verification": ["./gradlew testDebugUnitTest --tests app.galeria.data.AnnualReviewTest --no-daemon"],
+      "limitations": "Local annual statistics and media grid, not Honor's unavailable visual template."
+    },
+    {
+      "id": "N007",
+      "status": "blocked",
+      "implementationEvidence": ["app/src/main/java/app/galeria/data/CollageRenderer.kt", "app/src/main/java/app/galeria/ui/MemoriesCreateScreens.kt"],
+      "verification": ["./gradlew testDebugUnitTest --tests app.galeria.data.CollageLayoutTest --no-daemon"],
+      "blocker": "No compatible Motion Photo parser or moving-collage renderer is implemented. Static collage remains available but is not equivalent."
+    },
+    {
+      "id": "N008",
+      "status": "blocked",
+      "implementationEvidence": ["app/src/main/java/app/galeria/data/SlideshowVideoExporter.kt"],
+      "verification": ["./gradlew testDebugUnitTest --tests app.galeria.data.SlideshowPlanTest --no-daemon"],
+      "blocker": "Honor's generative AI Image to Video service is private. The local image-sequence MP4 exporter is not presented as an AI equivalent."
+    },
+    {
+      "id": "N009",
+      "status": "blocked",
+      "implementationEvidence": ["app/src/main/java/app/galeria/data/ImageEditorRenderer.kt"],
+      "verification": ["./gradlew testDebugUnitTest --tests app.galeria.data.ImageEditorRendererTest --no-daemon"],
+      "blocker": "AI Magic Retouch, Eraser and De-reflection require Honor models, services or hardware that are not redistributable. Local filters, drawing and mosaic are not AI substitutes."
+    },
+    {
+      "id": "N010",
+      "status": "blocked",
+      "implementationEvidence": ["app/src/main/java/app/galeria/data/MediaSearch.kt"],
+      "verification": ["./gradlew testDebugUnitTest --tests app.galeria.data.MediaSearchTest --no-daemon"],
+      "blocker": "MagicOS AI Photos Agent is an external private service. Local text search does not claim agent parity."
+    }
+  ],
+  "summary": { "verified": 3, "implemented": 3, "blocked": 4 }
+}

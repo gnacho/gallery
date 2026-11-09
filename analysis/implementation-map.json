@@ -1,0 +1,1388 @@
+{
+  "schemaVersion": 1,
+  "sourceApk": {
+    "package": "com.hihonor.photos",
+    "version": "152.0.10.794",
+    "sha256": "2e8a8a89d6a9910210986935e4c01f46d3d6190936b9771520e3a13492e6ee86"
+  },
+  "statusMeaning": {
+    "verified": "Core behavior has automated JVM evidence and the project builds; Android UI or service validation may still be listed as a limitation.",
+    "implemented": "Implementation is compiled and linked, but a decisive Android runtime check remains.",
+    "blocked": "The requested Honor capability is not reproduced; any local fallback is described without claiming parity."
+  },
+  "buildEvidence": {
+    "command": "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon",
+    "tests": 85,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": 45,
+    "result": "BUILD SUCCESSFUL"
+  },
+  "summary": {
+    "verified": 33,
+    "implemented": 21,
+    "blocked": 9
+  },
+  "features": [
+    {
+      "id": "F001",
+      "category": "timeline",
+      "name": "Cronologia de fotos y videos",
+      "sourceBehavior": "Agrupa elementos por fecha y lugar y abre el visor al pulsar una miniatura.",
+      "sourceTest": "Cargar una coleccion MediaStore con dos fechas y comprobar cabeceras, orden y apertura del elemento correcto.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/01-gallery-main-display-1.png",
+        "analysis/original/screenshots/01-gallery-main-controls.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/MediaStoreRepository.kt",
+        "app/src/main/java/app/galeria/data/TimelineGrouper.kt",
+        "app/src/test/java/app/galeria/data/TimelineGrouperTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.TimelineGrouperTest --no-daemon"
+      ],
+      "limitations": "La ubicacion se muestra cuando existe en los metadatos."
+    },
+    {
+      "id": "F002",
+      "category": "navigation",
+      "name": "Navegacion adaptable Galeria, Fotos, Recuerdos, Crear y Albumes",
+      "sourceBehavior": "Muestra rail en pantalla abierta y navegacion compacta en pantalla estrecha, conservando el destino.",
+      "sourceTest": "Verificar los cinco destinos en tamano expandido y compacto y la restauracion de estado tras recrear la actividad.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/01-gallery-main-display-1.png",
+        "analysis/original/screenshots/02-create-menu.png"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/GalleryNavigation.kt",
+        "app/src/main/java/app/galeria/ui/GalleryApp.kt",
+        "app/src/test/java/app/galeria/ui/GalleryNavigationTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.ui.GalleryNavigationTest --no-daemon"
+      ],
+      "limitations": "La geometria exacta requiere comparacion visual en dispositivos."
+    },
+    {
+      "id": "F003",
+      "category": "timeline",
+      "name": "Zoom de rejilla por gesto",
+      "sourceBehavior": "Cambia el numero de columnas y el nivel de agrupacion mediante pellizco.",
+      "sourceTest": "Simular niveles de zoom y comprobar limites, persistencia y ausencia de saltos de seleccion.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/01-gallery-main-controls.txt",
+        "analysis/original/rea/class-com_hihonor_gallery_app_GalleryMain.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/TimelineScreen.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Pendiente de prueba tactil en dispositivo."
+    },
+    {
+      "id": "F004",
+      "category": "timeline",
+      "name": "Desplazamiento rapido con indicador temporal",
+      "sourceBehavior": "Permite recorrer colecciones largas y muestra la fecha visible.",
+      "sourceTest": "Con mil elementos sinteticos, arrastrar el indicador y comprobar posicion, etiqueta y rendimiento de fotogramas.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/01-gallery-main-controls.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/TimelineScreen.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Pendiente de medir el arrastre en una coleccion grande."
+    },
+    {
+      "id": "F005",
+      "category": "search",
+      "name": "Entrada de busqueda desde Fotos",
+      "sourceBehavior": "Abre una pantalla de busqueda sin abandonar la coleccion.",
+      "sourceTest": "Pulsar el boton con id gallery_search_btn y verificar foco, teclado y retorno sin perdida de posicion.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/01-gallery-main-controls.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/TimelineScreen.kt",
+        "app/src/main/java/app/galeria/data/MediaSearch.kt",
+        "app/src/test/java/app/galeria/data/MediaSearchTest.kt",
+        "app/src/androidTest/java/app/galeria/ui/GalleryUiInstrumentedTest.kt",
+        "verification/android/device/evidence.json"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.MediaSearchTest --no-daemon",
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon",
+        "ANDROID_SERIAL=emulator-5554 ./gradlew connectedDebugAndroidTest --no-daemon",
+        "node tools/verify-android-evidence.mjs"
+      ],
+      "limitations": "Entrada integrada en Fotos; busqueda y resultados vacios verificados en Android 17 con MediaStore sintetico."
+    },
+    {
+      "id": "F006",
+      "category": "search",
+      "name": "Busqueda por texto y metadatos",
+      "sourceBehavior": "Filtra por nombre, album, fecha, tipo y lugar cuando los metadatos existen.",
+      "sourceTest": "Indexar datos sinteticos y comprobar consultas por cada campo, mayusculas y resultados vacios.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-inventory.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/MediaSearch.kt",
+        "app/src/test/java/app/galeria/data/MediaSearchTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.MediaSearchTest --no-daemon"
+      ],
+      "limitations": "Lugar depende de metadatos de album o EXIF disponibles."
+    },
+    {
+      "id": "F007",
+      "category": "search",
+      "name": "Sugerencias e historial de busqueda",
+      "sourceBehavior": "Propone busquedas recientes y categorias sin enviar contenido fuera del dispositivo.",
+      "sourceTest": "Guardar, repetir y borrar consultas y verificar persistencia local y ausencia de trafico.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-inventory.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/SearchHistory.kt",
+        "app/src/test/java/app/galeria/data/SearchHistoryTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.SearchHistoryTest --no-daemon"
+      ],
+      "limitations": "Historial local de ocho entradas."
+    },
+    {
+      "id": "F008",
+      "category": "people",
+      "name": "Albumes de personas y mascotas",
+      "sourceBehavior": "Agrupa caras detectadas, permite asignar nombres y abre los elementos asociados.",
+      "sourceTest": "Usar imagenes sinteticas con caras y comprobar deteccion, agrupacion, nombre y persistencia sin red.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-inventory.json",
+        "analysis/original/manifest-components.txt"
+      ],
+      "status": "blocked",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/PeopleScreen.kt",
+        "app/src/main/java/app/galeria/data/FaceDetection.kt",
+        "app/src/main/java/app/galeria/data/PeopleOrganizer.kt",
+        "app/src/test/java/app/galeria/data/PeopleOrganizerTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.PeopleOrganizerTest --no-daemon",
+        "./gradlew testDebugUnitTest --tests app.galeria.data.FaceDetectionTest --no-daemon"
+      ],
+      "limitations": "MagicOS no expone sus modelos de identidad y mascotas. Hay deteccion local y nombres manuales, no agrupacion biometrica equivalente.",
+      "blocker": "MagicOS no expone sus modelos de identidad y mascotas. Hay deteccion local y nombres manuales, no agrupacion biometrica equivalente."
+    },
+    {
+      "id": "F009",
+      "category": "places",
+      "name": "Album de mapa",
+      "sourceBehavior": "Situa fotos con coordenadas en un mapa y agrupa marcadores cercanos.",
+      "sourceTest": "Crear metadatos GPS de prueba y verificar marcadores, agrupacion y apertura del album correspondiente.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MapScreen.kt",
+        "app/src/main/java/app/galeria/data/LocationGrouper.kt",
+        "app/src/main/java/app/galeria/data/MediaLocationReader.kt",
+        "app/src/test/java/app/galeria/data/LocationGrouperTest.kt",
+        "app/src/test/java/app/galeria/data/MediaLocationReaderTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.LocationGrouperTest --no-daemon",
+        "./gradlew testDebugUnitTest --tests app.galeria.data.MediaLocationReaderTest --no-daemon"
+      ],
+      "limitations": "Usa teselas OpenStreetMap y requiere red para el mapa base."
+    },
+    {
+      "id": "F010",
+      "category": "memories",
+      "name": "Feed de Recuerdos",
+      "sourceBehavior": "Genera colecciones por aniversarios, fechas y lugares y las presenta como tarjetas.",
+      "sourceTest": "Construir una coleccion fechada y comprobar agrupacion determinista, portada y navegacion.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/01-gallery-main-display-1.png",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MemoriesCreateScreens.kt",
+        "app/src/main/java/app/galeria/data/MemoryGrouper.kt",
+        "app/src/test/java/app/galeria/data/MemoryGrouperTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.MemoryGrouperTest --no-daemon"
+      ],
+      "limitations": "Genera aniversarios; no reproduce todos los algoritmos de Honor."
+    },
+    {
+      "id": "F011",
+      "category": "memories",
+      "name": "Reproduccion de Recuerdos",
+      "sourceBehavior": "Reproduce un recuerdo como presentacion con transiciones y controles.",
+      "sourceTest": "Reproducir un recuerdo sintetico y verificar orden, pausa, reanudacion y salida.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-inventory.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MemoriesCreateScreens.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Presentacion local con intervalo configurable, sin afirmar las mismas transiciones de Honor."
+    },
+    {
+      "id": "F012",
+      "category": "create",
+      "name": "Menu Crear",
+      "sourceBehavior": "Presenta Imagen a video, Corte, Collage, Pelicula instantanea, Video y Plantillas.",
+      "sourceTest": "Comparar los destinos y textos del menu con la captura y abrir cada flujo local disponible.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/02-create-menu.png",
+        "analysis/original/screenshots/02-create-menu-controls.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MemoriesCreateScreens.kt",
+        "app/src/androidTest/java/app/galeria/ui/GalleryUiInstrumentedTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon",
+        "ANDROID_SERIAL=emulator-5554 ./gradlew connectedDebugAndroidTest --no-daemon"
+      ],
+      "limitations": "Menu y opciones visibles verificados; la apertura de todos los flujos locales no se ha ejercitado."
+    },
+    {
+      "id": "F013",
+      "category": "create",
+      "name": "Imagen a video",
+      "sourceBehavior": "Convierte una seleccion de imagenes en un video con movimiento y duracion configurables.",
+      "sourceTest": "Generar un MP4 sintetico y comprobar duracion, resolucion, pistas y reproduccion.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/02-create-menu-controls.json",
+        "analysis/original/manifest-components.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/SlideshowVideoExporter.kt",
+        "app/src/main/java/app/galeria/data/SlideshowPlan.kt",
+        "app/src/test/java/app/galeria/data/SlideshowPlanTest.kt",
+        "app/src/androidTest/java/app/galeria/data/Media3InstrumentedTest.kt",
+        "verification/android/device/evidence.json"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.SlideshowPlanTest --no-daemon",
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon",
+        "ANDROID_SERIAL=emulator-5554 ./gradlew connectedDebugAndroidTest --no-daemon",
+        "node tools/verify-android-evidence.mjs"
+      ],
+      "limitations": "MP4 H264 verificado con dos imagenes, duracion y fotogramas; secuencia estatica, sin afirmar el movimiento de Honor."
+    },
+    {
+      "id": "F014",
+      "category": "create",
+      "name": "Corte de video",
+      "sourceBehavior": "Selecciona un video y recorta inicio y fin sin alterar el original.",
+      "sourceTest": "Recortar un video de prueba y comprobar limites, duracion, audio y conservacion de la fuente.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/02-create-menu-controls.json",
+        "analysis/original/manifest-components.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/VideoTrimmer.kt",
+        "app/src/main/java/app/galeria/data/VideoTrimSpec.kt",
+        "app/src/main/java/app/galeria/ui/VideoEditorScreen.kt",
+        "app/src/test/java/app/galeria/data/VideoTrimSpecTest.kt",
+        "app/src/androidTest/java/app/galeria/data/Media3InstrumentedTest.kt",
+        "verification/android/device/evidence.json"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.VideoTrimSpecTest --no-daemon",
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon",
+        "ANDROID_SERIAL=emulator-5554 ./gradlew connectedDebugAndroidTest --no-daemon",
+        "node tools/verify-android-evidence.mjs"
+      ],
+      "limitations": "Recorte H264/AAC verificado en Android 17 y original preservado; no se afirman otras transformaciones."
+    },
+    {
+      "id": "F015",
+      "category": "create",
+      "name": "Collage de dos a nueve imagenes",
+      "sourceBehavior": "Permite elegir material, disposicion y proporcion y exportar una nueva imagen.",
+      "sourceTest": "Probar distribuciones de 2 a 9 elementos, guardar y validar dimensiones y numero de imagenes.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/02-create-menu-controls.json",
+        "analysis/original/rea/class-com_hihonor_photos_feature_collages_CollagesActivity.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/CollageLayout.kt",
+        "app/src/main/java/app/galeria/data/CollageRenderer.kt",
+        "app/src/test/java/app/galeria/data/CollageLayoutTest.kt",
+        "app/src/test/java/app/galeria/data/CollageRendererTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.CollageLayoutTest --no-daemon",
+        "./gradlew testDebugUnitTest --tests app.galeria.data.CollageRendererTest --no-daemon"
+      ],
+      "limitations": "Disposicion de cuadricula y salida cuadrada, no todas las plantillas Honor."
+    },
+    {
+      "id": "F016",
+      "category": "create",
+      "name": "Pelicula instantanea",
+      "sourceBehavior": "Monta automaticamente una pelicula a partir de una seleccion.",
+      "sourceTest": "Generar una pelicula sintetica y comprobar orden, transiciones, pista de video y exportacion.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/02-create-menu-controls.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MemoriesCreateScreens.kt",
+        "app/src/main/java/app/galeria/data/SlideshowVideoExporter.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Pelicula automatica basica mediante la exportacion de imagenes, sin motor narrativo Honor."
+    },
+    {
+      "id": "F017",
+      "category": "create",
+      "name": "Plantillas Ritmo y Dinamico",
+      "sourceBehavior": "Aplica ritmos y transiciones de la plantilla elegida.",
+      "sourceTest": "Comparar dos exportaciones con la misma entrada y verificar tiempos y transiciones diferentes.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/02-create-menu.png",
+        "analysis/original/screenshots/02-create-menu-controls.json"
+      ],
+      "status": "blocked",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MemoriesCreateScreens.kt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Las plantillas Ritmo y Dinamico, sus recursos y logica de sincronizacion no son una API publica reutilizable.",
+      "blocker": "Las plantillas Ritmo y Dinamico, sus recursos y logica de sincronizacion no son una API publica reutilizable."
+    },
+    {
+      "id": "F018",
+      "category": "community",
+      "name": "Comunidad de fotos",
+      "sourceBehavior": "Abre el servicio comunitario asociado cuando existe una cuenta compatible.",
+      "sourceTest": "Verificar el comportamiento sin cuenta y documentar cualquier dependencia externa sin falsificar el servicio.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/02-create-menu-controls.json",
+        "analysis/original/manifest-components.txt"
+      ],
+      "status": "blocked",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MemoriesCreateScreens.kt",
+        "analysis/latest/report.md"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "La Comunidad de fotos depende de cuenta y servicios Honor no publicados; no se simula una comunidad local.",
+      "blocker": "La Comunidad de fotos depende de cuenta y servicios Honor no publicados; no se simula una comunidad local."
+    },
+    {
+      "id": "F019",
+      "category": "albums",
+      "name": "Lista de albumes",
+      "sourceBehavior": "Agrupa medios por bucket y muestra portada, nombre y cantidad.",
+      "sourceTest": "Crear buckets sinteticos y comprobar portada, recuento, orden y actualizacion.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/01-gallery-main-display-1.png",
+        "analysis/original/rea/class-com_hihonor_gallery_app_GalleryMain.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/AlbumGrouper.kt",
+        "app/src/test/java/app/galeria/data/AlbumGrouperTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.AlbumGrouperTest --no-daemon"
+      ],
+      "limitations": "Portadas y recuentos proceden de MediaStore."
+    },
+    {
+      "id": "F020",
+      "category": "albums",
+      "name": "Detalle de album",
+      "sourceBehavior": "Abre la cronologia filtrada por album y mantiene las acciones de seleccion.",
+      "sourceTest": "Abrir dos albums y comprobar que no mezclan elementos y que Atras restaura la lista.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-inventory.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/AlbumsScreen.kt",
+        "app/src/main/java/app/galeria/ui/TimelineScreen.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Pendiente de recorrido visual en dispositivo."
+    },
+    {
+      "id": "F021",
+      "category": "albums",
+      "name": "Crear, renombrar y eliminar albumes",
+      "sourceBehavior": "Gestiona albumes locales mediante operaciones confirmadas y reversibles cuando el sistema lo permite.",
+      "sourceTest": "Crear y renombrar un album sintetico y verificar MediaStore; probar cancelacion de borrado sin cambios.",
+      "sourceEvidence": [
+        "analysis/original/resource-feature-labels.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/LibraryOrganizer.kt",
+        "app/src/test/java/app/galeria/data/LibraryOrganizerTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.LibraryOrganizerTest --no-daemon"
+      ],
+      "limitations": "Los albumes personalizados son agrupaciones virtuales reversibles; no se borran carpetas fisicas."
+    },
+    {
+      "id": "F022",
+      "category": "albums",
+      "name": "Ocultar y mostrar albumes",
+      "sourceBehavior": "Excluye albumes de la vista principal y permite recuperarlos.",
+      "sourceTest": "Ocultar un bucket de prueba y comprobar filtrado, persistencia y restauracion.",
+      "sourceEvidence": [
+        "analysis/original/resource-feature-labels.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/LibraryOrganizerStore.kt",
+        "app/src/test/java/app/galeria/data/LibraryOrganizerStoreTest.kt",
+        "app/src/main/java/app/galeria/ui/SettingsScreen.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.LibraryOrganizerStoreTest --no-daemon"
+      ],
+      "limitations": "Recuperacion desde Ajustes."
+    },
+    {
+      "id": "F023",
+      "category": "albums",
+      "name": "Album privado con autenticacion",
+      "sourceBehavior": "Protege elementos privados con credencial o biometria y no expone miniaturas fuera del flujo.",
+      "sourceTest": "Comprobar bloqueo, cancelacion biometrica, ausencia de miniaturas publicas y desbloqueo autorizado en pruebas.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/PrivateVault.kt",
+        "app/src/main/java/app/galeria/data/VaultCodec.kt",
+        "app/src/main/java/app/galeria/data/VaultAuthenticator.kt",
+        "app/src/main/java/app/galeria/ui/PrivateVaultScreen.kt",
+        "app/src/test/java/app/galeria/data/PrivateVaultTest.kt",
+        "app/src/test/java/app/galeria/data/VaultCodecTest.kt",
+        "app/src/androidTest/java/app/galeria/data/VaultInstrumentedTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.PrivateVaultTest --no-daemon",
+        "./gradlew testDebugUnitTest --tests app.galeria.data.VaultCodecTest --no-daemon",
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon",
+        "ANDROID_SERIAL=emulator-5554 ./gradlew connectedDebugAndroidTest --no-daemon"
+      ],
+      "limitations": "AES-GCM con AndroidKeyStore y restauracion verificados; biometria, credencial y ausencia de fugas visuales pendientes."
+    },
+    {
+      "id": "F024",
+      "category": "trash",
+      "name": "Papelera Eliminados",
+      "sourceBehavior": "Lista elementos enviados a la papelera y su retencion.",
+      "sourceTest": "Mover un elemento sintetico a papelera y comprobar que desaparece de Fotos y aparece en Eliminados.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/01-gallery-main-controls.txt",
+        "analysis/original/rea/class-com_hihonor_gallery_recycle_app_RecycleAlbumActivity.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/MediaStoreRepository.kt",
+        "app/src/test/java/app/galeria/data/MediaStoreRepositoryTest.kt",
+        "app/src/main/java/app/galeria/ui/AlbumsScreen.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.MediaStoreRepositoryTest --no-daemon"
+      ],
+      "limitations": "La retencion efectiva la controla Android."
+    },
+    {
+      "id": "F025",
+      "category": "trash",
+      "name": "Restaurar elementos",
+      "sourceBehavior": "Devuelve uno o varios elementos a su coleccion original.",
+      "sourceTest": "Restaurar un elemento de prueba y comprobar URI, album y reaparicion en la cronologia.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_gallery_recycle_app_RecycleAlbumActivity.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/MediaStoreRequests.kt",
+        "app/src/main/java/app/galeria/ui/GalleryApp.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Restauracion mediante confirmacion del sistema, pendiente en dispositivo."
+    },
+    {
+      "id": "F026",
+      "category": "trash",
+      "name": "Borrado definitivo y vaciar papelera",
+      "sourceBehavior": "Solicita confirmacion del sistema antes de borrar permanentemente.",
+      "sourceTest": "Verificar cancelacion sin cambios y confirmacion sobre un elemento sintetico, nunca sobre datos personales.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_gallery_recycle_app_RecycleAlbumActivity.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/MediaStoreRequests.kt",
+        "app/src/main/java/app/galeria/ui/GalleryApp.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Borrado y vaciado siempre requieren confirmacion de Android."
+    },
+    {
+      "id": "F027",
+      "category": "trash",
+      "name": "Retencion y expiracion",
+      "sourceBehavior": "Muestra dias restantes y excluye elementos expirados segun la politica del sistema.",
+      "sourceTest": "Usar fechas sinteticas limite y comprobar calculo de dias y comportamiento al expirar.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-inventory.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/TrashRetentionReader.kt",
+        "app/src/test/java/app/galeria/data/TrashRetentionReaderTest.kt",
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.TrashRetentionReaderTest --no-daemon"
+      ],
+      "limitations": "Muestra DATE_EXPIRES cuando MediaStore lo facilita."
+    },
+    {
+      "id": "F028",
+      "category": "viewer",
+      "name": "Visor de fotos con swipe y zoom",
+      "sourceBehavior": "Navega entre fotos, hace zoom, doble toque y mantiene la posicion.",
+      "sourceTest": "Verificar swipe, limites de zoom, doble toque, rotacion y restauracion del indice.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/04-photo-viewer.png",
+        "analysis/original/screenshots/04-photo-viewer-controls.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt",
+        "app/src/main/java/app/galeria/ui/ViewerTransform.kt",
+        "app/src/test/java/app/galeria/ui/ViewerTransformTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.ui.ViewerTransformTest --no-daemon"
+      ],
+      "limitations": "El gesto y doble toque requieren validacion tactil."
+    },
+    {
+      "id": "F029",
+      "category": "viewer",
+      "name": "Reproduccion de video",
+      "sourceBehavior": "Reproduce video y audio con controles de posicion, pausa y pantalla completa.",
+      "sourceTest": "Reproducir un clip sintetico y comprobar progreso, pausa, fin y liberacion del reproductor.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-inventory.json",
+        "analysis/original/manifest-components.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt",
+        "app/src/test/java/app/galeria/data/PlaybackSpeedTest.kt",
+        "app/src/androidTest/java/app/galeria/data/VideoPlaybackInstrumentedTest.kt",
+        "verification/android/device/evidence.json"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.PlaybackSpeedTest --no-daemon",
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon",
+        "ANDROID_SERIAL=emulator-5554 ./gradlew connectedDebugAndroidTest --no-daemon",
+        "node tools/verify-android-evidence.mjs"
+      ],
+      "limitations": "READY, primer fotograma, pausa, reanudacion y ENDED verificados con H264/AAC; codecs dependen del dispositivo."
+    },
+    {
+      "id": "F030",
+      "category": "viewer",
+      "name": "Live Photo y fotos en movimiento",
+      "sourceBehavior": "Reproduce la parte animada cuando el archivo contiene video asociado.",
+      "sourceTest": "Usar un par foto-video sintetico y verificar deteccion, reproduccion y ausencia de bucle en fotos normales.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-inventory.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "blocked",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "No se ha implementado el emparejamiento propietario de Honor Motion Photo; GIF/WebP y video si tienen reproduccion.",
+      "blocker": "No se ha implementado el emparejamiento propietario de Honor Motion Photo; GIF/WebP y video si tienen reproduccion."
+    },
+    {
+      "id": "F031",
+      "category": "viewer",
+      "name": "GIF y WebP animados",
+      "sourceBehavior": "Respeta la animacion de formatos animados y el ciclo de vida del visor.",
+      "sourceTest": "Cargar GIF y WebP sinteticos y verificar fotogramas, pausa al salir y liberacion.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-inventory.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "AnimatedImageDrawable con ciclo de vida; pendiente de probar archivos reales."
+    },
+    {
+      "id": "F032",
+      "category": "details",
+      "name": "Detalles EXIF e histograma",
+      "sourceBehavior": "Muestra archivo, fecha, tamano, dimensiones, camara, exposicion, ISO, focal, apertura, ruta e histograma.",
+      "sourceTest": "Leer una imagen con EXIF conocido y comparar todos los valores y los canales del histograma.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/05-photo-details.png"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/MediaDetailsReader.kt",
+        "app/src/main/java/app/galeria/data/HistogramCalculator.kt",
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt",
+        "app/src/test/java/app/galeria/data/HistogramCalculatorTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.HistogramCalculatorTest --no-daemon",
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Los campos dependen del EXIF disponible."
+    },
+    {
+      "id": "F033",
+      "category": "actions",
+      "name": "Favoritos",
+      "sourceBehavior": "Alterna favorito y actualiza el album de favoritos.",
+      "sourceTest": "Alternar dos veces un elemento sintetico y comprobar estado, persistencia y filtrado.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/04-photo-viewer-controls.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/MediaStoreRequests.kt",
+        "app/src/main/java/app/galeria/data/MediaStoreRepository.kt",
+        "app/src/main/java/app/galeria/ui/GalleryApp.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "La mutacion usa createFavoriteRequest y necesita validacion Android."
+    },
+    {
+      "id": "F034",
+      "category": "actions",
+      "name": "Compartir",
+      "sourceBehavior": "Abre el dialogo del sistema con el contenido y MIME correctos.",
+      "sourceTest": "Compartir una imagen y un video sinteticos y verificar URI concedida, MIME y ausencia de exposicion persistente.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/04-photo-viewer-controls.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/ShareIntents.kt",
+        "app/src/test/java/app/galeria/data/ShareIntentsTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.ShareIntentsTest --no-daemon"
+      ],
+      "limitations": "MIME y concesion de lectura cubiertos por pruebas."
+    },
+    {
+      "id": "F035",
+      "category": "actions",
+      "name": "Eliminar a papelera",
+      "sourceBehavior": "Solicita confirmacion y envia el elemento a la papelera del sistema cuando esta disponible.",
+      "sourceTest": "Cancelar y confirmar con un elemento sintetico y comprobar ambos resultados sin tocar datos personales.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/04-photo-viewer-controls.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/MediaStoreRequests.kt",
+        "app/src/main/java/app/galeria/ui/GalleryApp.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "No se elimina sin confirmacion del sistema."
+    },
+    {
+      "id": "F036",
+      "category": "actions",
+      "name": "Menu Mas del visor",
+      "sourceBehavior": "Expone acciones contextuales segun tipo y permisos del elemento.",
+      "sourceTest": "Comparar acciones para foto local, video y elemento sin permiso de escritura.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/04-photo-viewer-controls.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Acciones contextuales segun tipo y estado."
+    },
+    {
+      "id": "F037",
+      "category": "actions",
+      "name": "Renombrar archivo",
+      "sourceBehavior": "Cambia el nombre visible conservando extension y ubicacion cuando MediaStore lo permite.",
+      "sourceTest": "Renombrar un archivo sintetico, comprobar nombre, extension y manejo de duplicados.",
+      "sourceEvidence": [
+        "analysis/original/resource-feature-labels.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/RenamePlan.kt",
+        "app/src/main/java/app/galeria/data/MediaStoreOperations.kt",
+        "app/src/test/java/app/galeria/data/RenamePlanTest.kt",
+        "app/src/test/java/app/galeria/data/MediaStoreOperationsTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.RenamePlanTest --no-daemon",
+        "./gradlew testDebugUnitTest --tests app.galeria.data.MediaStoreOperationsTest --no-daemon"
+      ],
+      "limitations": "Conserva extension y exige createWriteRequest en Android."
+    },
+    {
+      "id": "F038",
+      "category": "actions",
+      "name": "Mover y copiar entre albumes",
+      "sourceBehavior": "Mueve o copia elementos mediante destino elegido y confirma conflictos.",
+      "sourceTest": "Mover y copiar entre buckets sinteticos y comprobar contenido, URI y cancelacion.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_gallery_recycle_app_RecycleAlbumActivity.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/AlbumTransferPlan.kt",
+        "app/src/main/java/app/galeria/data/MediaStoreOperations.kt",
+        "app/src/test/java/app/galeria/data/AlbumTransferPlanTest.kt",
+        "app/src/test/java/app/galeria/data/MediaStoreOperationsTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.AlbumTransferPlanTest --no-daemon",
+        "./gradlew testDebugUnitTest --tests app.galeria.data.MediaStoreOperationsTest --no-daemon"
+      ],
+      "limitations": "Mover exige autorizacion de escritura; conflictos los resuelve MediaStore."
+    },
+    {
+      "id": "F039",
+      "category": "actions",
+      "name": "Establecer como fondo",
+      "sourceBehavior": "Entrega la imagen al flujo de fondo de pantalla del sistema.",
+      "sourceTest": "Invocar el flujo con una imagen sintetica y verificar intent y cancelacion sin cambiar el fondo real.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Entrega la imagen a WallpaperManager; pendiente de validacion del flujo del sistema."
+    },
+    {
+      "id": "F040",
+      "category": "actions",
+      "name": "Imprimir",
+      "sourceBehavior": "Genera un trabajo de impresion con orientacion y ajuste correctos.",
+      "sourceTest": "Crear un trabajo sintetico y comprobar adaptador, paginas y cancelacion.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "PrintHelper con ajuste FIT; pendiente de impresora o vista previa real."
+    },
+    {
+      "id": "F041",
+      "category": "actions",
+      "name": "Enviar a pantalla o Cast",
+      "sourceBehavior": "Abre las rutas de reproduccion compatibles sin incluir protocolos propietarios no disponibles.",
+      "sourceTest": "Verificar descubrimiento sin dispositivos y seleccion de una ruta sintetica cuando exista.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "blocked",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt",
+        "analysis/latest/report.md"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "No hay una ruta Cast FOSS integrada: Google Cast requiere componentes propietarios que no se han añadido.",
+      "blocker": "No hay una ruta Cast FOSS integrada: Google Cast requiere componentes propietarios que no se han añadido."
+    },
+    {
+      "id": "F042",
+      "category": "actions",
+      "name": "Comparar fotos",
+      "sourceBehavior": "Presenta dos o mas imagenes seleccionadas para comparar encuadre y detalle.",
+      "sourceTest": "Seleccionar dos imagenes sinteticas y comprobar sincronizacion de zoom y salida.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Comparacion dentro del visor, pendiente de prueba tactil."
+    },
+    {
+      "id": "F043",
+      "category": "actions",
+      "name": "Presentacion de diapositivas",
+      "sourceBehavior": "Recorre la seleccion con intervalo y transicion configurables.",
+      "sourceTest": "Reproducir tres imagenes sinteticas y comprobar orden, pausa, intervalo y fin.",
+      "sourceEvidence": [
+        "analysis/original/resource-feature-labels.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/MediaViewer.kt",
+        "app/src/main/java/app/galeria/ui/MemoriesCreateScreens.kt",
+        "app/src/main/java/app/galeria/data/GallerySettings.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Orden e intervalo implementados; transiciones no son una copia de Honor."
+    },
+    {
+      "id": "F044",
+      "category": "selection",
+      "name": "Seleccion multiple",
+      "sourceBehavior": "Entra en seleccion con pulsacion larga y muestra recuento y acciones.",
+      "sourceTest": "Seleccionar y deseleccionar elementos, rotar y comprobar recuento y conservacion.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_photos_feature_collages_CollagesActivity.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/MediaSelection.kt",
+        "app/src/test/java/app/galeria/data/MediaSelectionTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.MediaSelectionTest --no-daemon"
+      ],
+      "limitations": "Seleccion inmutable y recuento conectados a la UI."
+    },
+    {
+      "id": "F045",
+      "category": "selection",
+      "name": "Acciones por lotes",
+      "sourceBehavior": "Comparte, mueve, copia, marca o elimina la seleccion con una unica confirmacion.",
+      "sourceTest": "Ejecutar cada lote sobre datos sinteticos y verificar resultados parciales, cancelacion y errores.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_gallery_recycle_app_RecycleAlbumActivity.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/GalleryApp.kt",
+        "app/src/main/java/app/galeria/data/MediaStoreRequests.kt",
+        "app/src/main/java/app/galeria/data/ShareIntents.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Cada operacion destructiva conserva la confirmacion del sistema."
+    },
+    {
+      "id": "F046",
+      "category": "editor",
+      "name": "Recortar, rotar y voltear",
+      "sourceBehavior": "Edita una copia con recorte libre o proporciones, rotacion y volteo.",
+      "sourceTest": "Aplicar transformaciones conocidas y comparar dimensiones y pixeles de la salida.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_gallery_editor_ui_EditorUiController.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/ImageEditState.kt",
+        "app/src/main/java/app/galeria/data/ImageEditorRenderer.kt",
+        "app/src/test/java/app/galeria/data/ImageEditorRendererTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.ImageEditorRendererTest --no-daemon"
+      ],
+      "limitations": "Recorte, rotacion y volteo rasterizados y guardados como copia."
+    },
+    {
+      "id": "F047",
+      "category": "editor",
+      "name": "Ajustes de imagen",
+      "sourceBehavior": "Ajusta brillo, contraste, saturacion, calidez y parametros observados con vista previa.",
+      "sourceTest": "Aplicar valores extremos y medios y comprobar reproducibilidad numerica de la salida.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_gallery_editor_ui_EditorUiController.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/ImageEditState.kt",
+        "app/src/main/java/app/galeria/data/ImageEditorRenderer.kt",
+        "app/src/test/java/app/galeria/data/ImageEditorRendererTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.ImageEditorRendererTest --no-daemon"
+      ],
+      "limitations": "Brillo, contraste, saturacion y calidez con pruebas de pixeles."
+    },
+    {
+      "id": "F048",
+      "category": "editor",
+      "name": "Filtros",
+      "sourceBehavior": "Presenta filtros con miniatura y permite ajustar intensidad.",
+      "sourceTest": "Aplicar cada filtro a una imagen fija y comprobar hashes diferentes, intensidad cero y deshacer.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_gallery_editor_ui_EditorUiController.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/ImageEditState.kt",
+        "app/src/main/java/app/galeria/data/ImageEditorRenderer.kt",
+        "app/src/test/java/app/galeria/data/ImageEditorRendererTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.ImageEditorRendererTest --no-daemon"
+      ],
+      "limitations": "Filtros propios con intensidad; no se copian LUT propietarias."
+    },
+    {
+      "id": "F049",
+      "category": "editor",
+      "name": "Dibujo y texto",
+      "sourceBehavior": "Superpone trazos y texto editables con color y tamano.",
+      "sourceTest": "Dibujar y escribir sobre una imagen sintetica y verificar posiciones, color, deshacer y exportacion.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_gallery_editor_ui_EditorUiController.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/ImageEditState.kt",
+        "app/src/main/java/app/galeria/data/ImageEditorRenderer.kt",
+        "app/src/main/java/app/galeria/ui/EditorScreen.kt",
+        "app/src/test/java/app/galeria/data/ImageEditorRendererTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.ImageEditorRendererTest --no-daemon"
+      ],
+      "limitations": "Trazos y texto rasterizados; no son capas editables tras guardar."
+    },
+    {
+      "id": "F050",
+      "category": "editor",
+      "name": "Mosaico",
+      "sourceBehavior": "Pixela solo las zonas pintadas y permite ajustar el trazo.",
+      "sourceTest": "Aplicar mosaico a una region y comprobar que los pixeles exteriores permanecen identicos.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_gallery_editor_ui_EditorUiController.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/ImageEditState.kt",
+        "app/src/main/java/app/galeria/data/ImageEditorRenderer.kt",
+        "app/src/test/java/app/galeria/data/ImageEditorRendererTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.ImageEditorRendererTest --no-daemon"
+      ],
+      "limitations": "Mosaico por regiones con exterior intacto."
+    },
+    {
+      "id": "F051",
+      "category": "editor",
+      "name": "Bordes y marcas de agua",
+      "sourceBehavior": "Anade bordes o marcas configurables sin cubrir controles ni alterar el original.",
+      "sourceTest": "Exportar cada estilo y comprobar dimensiones, contenido y conservacion de la fuente.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_gallery_editor_ui_EditorUiController.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/ImageEditState.kt",
+        "app/src/main/java/app/galeria/data/ImageEditorRenderer.kt",
+        "app/src/test/java/app/galeria/data/ImageEditorRendererTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.ImageEditorRendererTest --no-daemon"
+      ],
+      "limitations": "Borde y marca de agua propios, no marcas Honor."
+    },
+    {
+      "id": "F052",
+      "category": "ai-editor",
+      "name": "Edicion con IA y borrado de objetos",
+      "sourceBehavior": "Abre las herramientas inteligentes compatibles y muestra su dependencia de servicios cuando exista.",
+      "sourceTest": "Verificar disponibilidad real, cancelacion y ausencia de afirmaciones de exito sin una salida generada.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/04-photo-viewer-controls.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "blocked",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/EditorScreen.kt",
+        "analysis/latest/report.md"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Borrado de objetos e IA de Honor dependen de modelos/servicios no disponibles; no se presenta una salida falsa.",
+      "blocker": "Borrado de objetos e IA de Honor dependen de modelos/servicios no disponibles; no se presenta una salida falsa."
+    },
+    {
+      "id": "F053",
+      "category": "ai-editor",
+      "name": "Recorte de sujeto y mejora automatica",
+      "sourceBehavior": "Genera una mascara o mejora solo si existe un motor local o servicio autorizado.",
+      "sourceTest": "Usar una imagen sintetica y comprobar mascara, exportacion y comportamiento sin motor.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-com_hihonor_gallery_editor_ui_EditorUiController.json",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "blocked",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/EditorScreen.kt",
+        "analysis/latest/report.md"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "No hay mascara de sujeto ni mejora automatica equivalente; las herramientas manuales no se etiquetan como IA.",
+      "blocker": "No hay mascara de sujeto ni mejora automatica equivalente; las herramientas manuales no se etiquetan como IA."
+    },
+    {
+      "id": "F054",
+      "category": "video-editor",
+      "name": "Edicion de video",
+      "sourceBehavior": "Ofrece recorte y transformaciones compatibles manteniendo audio y sincronizacion.",
+      "sourceTest": "Exportar un clip sintetico y medir duracion, fotogramas, audio y sincronizacion.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/VideoTrimmer.kt",
+        "app/src/main/java/app/galeria/ui/VideoEditorScreen.kt",
+        "app/src/test/java/app/galeria/data/VideoTrimSpecTest.kt",
+        "app/src/androidTest/java/app/galeria/data/Media3InstrumentedTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.VideoTrimSpecTest --no-daemon",
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon",
+        "ANDROID_SERIAL=emulator-5554 ./gradlew connectedDebugAndroidTest --no-daemon"
+      ],
+      "limitations": "Recorte con audio verificado en F014; otras transformaciones y sincronizacion audiovisual pendientes."
+    },
+    {
+      "id": "F055",
+      "category": "cloud",
+      "name": "Sincronizacion de nube Honor",
+      "sourceBehavior": "Refleja el estado de la cuenta y sincronizacion solo con credenciales y APIs autorizadas.",
+      "sourceTest": "Comprobar estado desconectado y documentar cualquier dependencia no reproducible sin enviar datos.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "blocked",
+      "implementationEvidence": [
+        "analysis/latest/report.md",
+        "analysis/original/manifest-components.txt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "No existen APIs publicas autorizadas de Honor Cloud en el proyecto; no se envian datos ni se simula sincronizacion.",
+      "blocker": "No existen APIs publicas autorizadas de Honor Cloud en el proyecto; no se envian datos ni se simula sincronizacion."
+    },
+    {
+      "id": "F056",
+      "category": "sharing",
+      "name": "Comparticion de fotos Honor",
+      "sourceBehavior": "Gestiona albumes compartidos solo cuando el servicio y la cuenta estan disponibles.",
+      "sourceTest": "Verificar comportamiento sin servicio y no simular albumes remotos como si fueran reales.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "blocked",
+      "implementationEvidence": [
+        "analysis/latest/report.md",
+        "analysis/original/manifest-components.txt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Los albumes compartidos Honor requieren servicio y cuenta; solo se implementa compartir por intents Android.",
+      "blocker": "Los albumes compartidos Honor requieren servicio y cuenta; solo se implementa compartir por intents Android."
+    },
+    {
+      "id": "F057",
+      "category": "widgets",
+      "name": "Widgets de fotos y recuerdos",
+      "sourceBehavior": "Expone widgets configurables con imagen elegida y actualizacion controlada.",
+      "sourceTest": "Crear un widget de prueba y comprobar configuracion, permisos, actualizacion y eliminacion.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "implemented",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/WidgetMediaSelection.kt",
+        "app/src/main/java/app/galeria/GalleryWidgetProvider.kt",
+        "app/src/test/java/app/galeria/data/WidgetMediaSelectionTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.WidgetMediaSelectionTest --no-daemon",
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon"
+      ],
+      "limitations": "Widget de ultima imagen; pendiente de anadirlo desde un launcher real."
+    },
+    {
+      "id": "F058",
+      "category": "settings",
+      "name": "Ajustes y gestion de datos",
+      "sourceBehavior": "Presenta preferencias de reproduccion, rejilla, datos y privacidad con valores persistentes.",
+      "sourceTest": "Cambiar cada preferencia local y comprobar valor tras reinicio y comportamiento asociado.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/GallerySettings.kt",
+        "app/src/main/java/app/galeria/data/GallerySettings.kt",
+        "app/src/main/java/app/galeria/ui/SettingsScreen.kt",
+        "app/src/test/java/app/galeria/data/GallerySettingsStoreTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.GallerySettingsStoreTest --no-daemon"
+      ],
+      "limitations": "Preferencias persistentes locales."
+    },
+    {
+      "id": "F059",
+      "category": "appearance",
+      "name": "Tema oscuro y adaptacion al sistema",
+      "sourceBehavior": "Reproduce el tema oscuro observado y respeta contraste, tipografia y modo del sistema.",
+      "sourceTest": "Comparar colores y contrastes en claro y oscuro y verificar cambio sin reiniciar.",
+      "sourceEvidence": [
+        "analysis/original/screenshots/01-gallery-main-display-1.png",
+        "analysis/original/screenshots/02-create-menu.png"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/ui/GalleryTheme.kt",
+        "app/src/test/java/app/galeria/ui/GalleryVisualTest.kt",
+        "app/src/androidTest/java/app/galeria/ui/GalleryUiInstrumentedTest.kt",
+        "verification/android/device/evidence.json"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.ui.GalleryVisualTest --no-daemon",
+        "./gradlew testDebugUnitTest assembleDebug lintDebug --no-daemon",
+        "ANDROID_SERIAL=emulator-5554 ./gradlew connectedDebugAndroidTest --no-daemon",
+        "node tools/verify-android-evidence.mjs"
+      ],
+      "limitations": "Capturas claras y oscuras verificadas en Android 17; geometria expandida y paridad con Honor pendientes."
+    },
+    {
+      "id": "F060",
+      "category": "integration",
+      "name": "Selector de imagenes y videos por intents",
+      "sourceBehavior": "Responde a seleccion simple y multiple con URIs y MIME correctos.",
+      "sourceTest": "Invocar ACTION_GET_CONTENT y picker con intents sinteticos y comprobar seleccion, cancelacion y permisos.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/PickerResults.kt",
+        "app/src/main/java/app/galeria/PickerActivity.kt",
+        "app/src/test/java/app/galeria/data/PickerResultsTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.PickerResultsTest --no-daemon"
+      ],
+      "limitations": "Contrato simple/multiple probado; seleccion y cancelacion requieren intent instrumental."
+    },
+    {
+      "id": "F061",
+      "category": "integration",
+      "name": "Recepcion de contenido compartido",
+      "sourceBehavior": "Importa imagenes o videos recibidos sin perder metadatos ni sobrescribir archivos.",
+      "sourceTest": "Enviar uno y varios archivos sinteticos y comprobar importacion, duplicados y cancelacion.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/rea/class-inventory.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/MediaStoreOperations.kt",
+        "app/src/main/java/app/galeria/MainActivity.kt",
+        "app/src/test/java/app/galeria/data/MediaStoreOperationsTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.MediaStoreOperationsTest --no-daemon"
+      ],
+      "limitations": "Importa copias con nombre y bytes; metadatos no conservados fuera de los soportados por MediaStore."
+    },
+    {
+      "id": "F062",
+      "category": "integration",
+      "name": "Apertura desde camara y otras apps",
+      "sourceBehavior": "Abre el elemento o coleccion solicitado por deep link e intent validado.",
+      "sourceTest": "Probar intents validos, datos inexistentes y URIs sin permiso sin exponer contenido.",
+      "sourceEvidence": [
+        "analysis/original/manifest-components.txt",
+        "analysis/original/rea/class-com_hihonor_gallery_app_GalleryMain.json"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/ExternalMediaReader.kt",
+        "app/src/main/java/app/galeria/MainActivity.kt",
+        "app/src/test/java/app/galeria/data/ExternalMediaReaderTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.ExternalMediaReaderTest --no-daemon"
+      ],
+      "limitations": "VIEW y EDIT leen URI y MIME; deep links propietarios no se anuncian."
+    },
+    {
+      "id": "F063",
+      "category": "editor",
+      "name": "Editor de capturas de pantalla",
+      "sourceBehavior": "Abre herramientas de recorte, dibujo y mosaico para capturas.",
+      "sourceTest": "Editar una captura sintetica y verificar guardado como copia y las mismas pruebas de regiones que el editor.",
+      "sourceEvidence": [
+        "analysis/original/rea/class-inventory.json",
+        "analysis/original/resource-feature-labels.txt"
+      ],
+      "status": "verified",
+      "implementationEvidence": [
+        "app/src/main/java/app/galeria/data/ImageEditorRenderer.kt",
+        "app/src/main/java/app/galeria/ui/EditorScreen.kt",
+        "app/src/test/java/app/galeria/data/ImageEditorRendererTest.kt"
+      ],
+      "verification": [
+        "./gradlew testDebugUnitTest --tests app.galeria.data.ImageEditorRendererTest --no-daemon"
+      ],
+      "limitations": "ACTION_EDIT abre el mismo editor con recorte, dibujo y mosaico."
+    }
+  ],
+  "androidEvidence": {
+    "device": "emulator-5554 (wibox-test AVD)",
+    "android": "17 (API 37)",
+    "command": "ANDROID_SERIAL=emulator-5554 ./gradlew connectedDebugAndroidTest --no-daemon",
+    "tests": 8,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": 5,
+    "evidence": [
+      "verification/android/tests.json",
+      "verification/android/device/evidence.json",
+      "verification/android/light/evidence.json",
+      "verification/android/dark/evidence.json"
+    ]
+  }
+}
