@@ -1,5 +1,6 @@
 package app.galeria.ui
 
+import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.widget.MediaController
 import android.widget.VideoView
@@ -41,8 +42,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import app.galeria.R
 import app.galeria.data.PrivateVault
 import app.galeria.data.VaultEntry
 import java.io.File
@@ -50,6 +53,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 internal fun PrivateVaultScreen(
     vault: PrivateVault,
@@ -60,6 +64,7 @@ internal fun PrivateVaultScreen(
     var entries by remember { mutableStateOf(vault.entries()) }
     var preview by remember { mutableStateOf<VaultEntry?>(null) }
     var deleting by remember { mutableStateOf<VaultEntry?>(null) }
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val refresh = { entries = vault.entries() }
     if (preview != null) {
@@ -74,9 +79,9 @@ internal fun PrivateVaultScreen(
                             preview = null
                             refresh()
                             onChanged()
-                            onMessage("Elemento restaurado")
+                            onMessage(context.getString(R.string.vault_item_restored))
                         }
-                        .onFailure { onMessage("No se pudo restaurar") }
+                        .onFailure { onMessage(context.getString(R.string.vault_restore_failed)) }
                 }
             },
         )
@@ -91,13 +96,13 @@ internal fun PrivateVaultScreen(
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onClose) { Icon(GalleryIcons.Back, "Salir del cofre") }
-                DestinationTitle("Privado")
+                IconButton(onClick = onClose) { Icon(GalleryIcons.Back, stringResource(R.string.vault_exit)) }
+                DestinationTitle(stringResource(R.string.album_private))
             }
         }
         if (entries.isEmpty()) {
             item(span = { GridItemSpan(maxLineSpan) }) {
-                MessageDestination("El cofre está vacío", "Mueve elementos aquí desde la selección o el visor.")
+                MessageDestination(stringResource(R.string.vault_empty_title), stringResource(R.string.vault_empty_message))
             }
         } else {
             items(entries, key = { it.fileName }) { entry ->
@@ -107,7 +112,7 @@ internal fun PrivateVaultScreen(
                         if (entry.item.mimeType.startsWith("video/")) {
                             Icon(
                                 GalleryIcons.Video,
-                                "Vídeo privado",
+                                stringResource(R.string.vault_private_video),
                                 modifier = Modifier.align(Alignment.Center).size(40.dp),
                             )
                         }
@@ -120,12 +125,12 @@ internal fun PrivateVaultScreen(
                                     .onSuccess {
                                         refresh()
                                         onChanged()
-                                        onMessage("Elemento restaurado")
+                                        onMessage(context.getString(R.string.vault_item_restored))
                                     }
-                                    .onFailure { onMessage("No se pudo restaurar") }
+                                    .onFailure { onMessage(context.getString(R.string.vault_restore_failed)) }
                             }
-                        }) { Text("Restaurar") }
-                        TextButton(onClick = { deleting = entry }) { Text("Borrar") }
+                        }) { Text(stringResource(R.string.restore)) }
+                        TextButton(onClick = { deleting = entry }) { Text(stringResource(R.string.vault_delete)) }
                     }
                 }
             }
@@ -134,17 +139,17 @@ internal fun PrivateVaultScreen(
     deleting?.let { entry ->
         AlertDialog(
             onDismissRequest = { deleting = null },
-            title = { Text("Borrar definitivamente") },
-            text = { Text("Se eliminará la única copia cifrada de ${entry.item.displayName}.") },
+            title = { Text(stringResource(R.string.delete_permanently)) },
+            text = { Text(stringResource(R.string.vault_delete_confirm, entry.item.displayName)) },
             confirmButton = {
                 TextButton(onClick = {
                     vault.deletePermanent(entry)
                     refresh()
                     deleting = null
-                    onMessage("Elemento privado eliminado")
-                }) { Text("Borrar") }
+                    onMessage(context.getString(R.string.vault_item_deleted))
+                }) { Text(stringResource(R.string.vault_delete)) }
             },
-            dismissButton = { TextButton(onClick = { deleting = null }) { Text("Cancelar") } },
+            dismissButton = { TextButton(onClick = { deleting = null }) { Text(stringResource(R.string.cancel)) } },
         )
     }
 }
@@ -212,9 +217,9 @@ private fun VaultPreview(
             modifier = Modifier.fillMaxWidth().background(Color(0x99000000)).padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onClose) { Icon(GalleryIcons.Back, "Cerrar") }
+            IconButton(onClick = onClose) { Icon(GalleryIcons.Back, stringResource(R.string.close)) }
             Text(entry.item.displayName, modifier = Modifier.weight(1f), maxLines = 1)
-            TextButton(onClick = onRestore) { Text("Restaurar") }
+            TextButton(onClick = onRestore) { Text(stringResource(R.string.restore)) }
         }
     }
 }

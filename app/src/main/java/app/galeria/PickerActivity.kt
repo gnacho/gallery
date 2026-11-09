@@ -43,9 +43,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import app.galeria.R
 import app.galeria.data.MediaItem
 import app.galeria.data.MediaStoreRepository
 import app.galeria.data.PickerResults
@@ -92,7 +94,7 @@ class PickerActivity : ComponentActivity() {
                     }
                 }
                 Scaffold(
-                    topBar = { TopAppBar(title = { Text(if (allowMultiple) "Selecciona fotos y vídeos" else "Selecciona un elemento") }) },
+                    topBar = { TopAppBar(title = { Text(stringResource(if (allowMultiple) R.string.picker_select_multiple else R.string.picker_select_single)) }) },
                     bottomBar = {
                         Button(
                             onClick = {
@@ -104,13 +106,13 @@ class PickerActivity : ComponentActivity() {
                             },
                             enabled = selected.isNotEmpty(),
                             modifier = Modifier.fillMaxWidth().padding(16.dp),
-                        ) { Text(if (selected.isEmpty()) "Selecciona para continuar" else "Confirmar ${selected.size}") }
+                        ) { Text(if (selected.isEmpty()) stringResource(R.string.picker_select_continue) else stringResource(R.string.picker_confirm, selected.size)) }
                     },
                 ) { padding ->
                     when {
                         loading -> Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-                        denied -> Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { Text("Se necesita acceso a tus fotos") }
-                        items.isEmpty() -> Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { Text("No hay elementos") }
+                        denied -> Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { Text(stringResource(R.string.picker_need_access)) }
+                        items.isEmpty() -> Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { Text(stringResource(R.string.picker_no_items)) }
                         else -> LazyVerticalGrid(
                             columns = GridCells.Adaptive(140.dp),
                             contentPadding = PaddingValues(3.dp),
@@ -133,7 +135,7 @@ class PickerActivity : ComponentActivity() {
                                     MediaImage(item, Modifier.fillMaxSize())
                                     if (isSelected) {
                                         Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.35f)))
-                                        Icon(Icons.Default.CheckCircle, "Seleccionado", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.align(Alignment.TopEnd).padding(8.dp))
+                                        Icon(Icons.Default.CheckCircle, stringResource(R.string.item_selected), tint = MaterialTheme.colorScheme.primary, modifier = Modifier.align(Alignment.TopEnd).padding(8.dp))
                                     }
                                 }
                             }

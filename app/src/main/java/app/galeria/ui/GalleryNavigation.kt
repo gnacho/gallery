@@ -1,16 +1,18 @@
 package app.galeria.ui
 
+import androidx.annotation.StringRes
+import app.galeria.R
 import app.galeria.data.MediaItem
 import app.galeria.data.TimelineGrouper
 import app.galeria.data.TimelineSection
 import java.time.ZoneId
 
-enum class GalleryDestination(val label: String) {
-    Gallery("Galería"),
-    Photos("Fotos"),
-    Memories("Recuerdos"),
-    Create("Crear"),
-    Albums("Álbumes"),
+enum class GalleryDestination(@StringRes val labelRes: Int) {
+    Gallery(R.string.gallery),
+    Photos(R.string.photos),
+    Memories(R.string.memories),
+    Create(R.string.create),
+    Albums(R.string.albums),
 }
 
 data class GalleryUiState(
@@ -21,8 +23,6 @@ data class GalleryUiState(
 )
 
 object GalleryNavigation {
-    val railLabels = GalleryDestination.entries.map { it.label }
-
     fun initial() = GalleryUiState(GalleryDestination.Photos)
 
     fun select(state: GalleryUiState, destination: GalleryDestination) = state.copy(destination = destination)

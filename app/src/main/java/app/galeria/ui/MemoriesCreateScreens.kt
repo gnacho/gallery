@@ -1,5 +1,6 @@
 package app.galeria.ui
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,9 +39,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.galeria.R
 import app.galeria.data.CollageRenderer
 import app.galeria.data.MediaItem
 import app.galeria.data.MemoryGrouper
@@ -67,23 +70,23 @@ internal fun MemoriesScreen(items: List<MediaItem>, onOpen: (MediaItem) -> Unit,
         return
     }
     if (playing != null) {
-        Slideshow(items = requireNotNull(playing).items, title = "Recuerdo de ${playing?.year}", slideshowSeconds = slideshowSeconds) {
+        Slideshow(items = requireNotNull(playing).items, title = stringResource(R.string.memory_of_year, requireNotNull(playing).year), slideshowSeconds = slideshowSeconds) {
             playing = null
         }
         return
     }
     LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = 18.dp)) {
-        item { DestinationTitle("Recuerdos") }
+        item { DestinationTitle(stringResource(R.string.memories)) }
         item {
             OutlinedButton(onClick = { annualVisible = true }, modifier = Modifier.padding(bottom = 16.dp)) {
-                Text("Resumen anual")
+                Text(stringResource(R.string.annual_summary))
             }
         }
         if (memories.isEmpty()) {
             item {
                 MessageDestination(
-                    "Aún no hay recuerdos",
-                    "Aquí aparecerán fotos y vídeos de este mismo día en años anteriores.",
+                    stringResource(R.string.no_memories_title),
+                    stringResource(R.string.no_memories_message),
                 )
             }
         } else {
@@ -96,11 +99,11 @@ internal fun MemoriesScreen(items: List<MediaItem>, onOpen: (MediaItem) -> Unit,
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Column(modifier = Modifier.weight(1f)) {
-                                Text("Un día como hoy", color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 14.sp)
-                                Text("${memory.year}", fontSize = 28.sp, fontWeight = FontWeight.SemiBold)
+                                Text(stringResource(R.string.on_this_day), color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 14.sp)
+                                Text(memory.year.toString(), fontSize = 28.sp, fontWeight = FontWeight.SemiBold)
                             }
                             IconButton(onClick = { playing = memory }) {
-                                Icon(GalleryIcons.Slideshow, "Reproducir recuerdo")
+                                Icon(GalleryIcons.Slideshow, stringResource(R.string.play_memory))
                             }
                         }
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -135,13 +138,14 @@ internal fun Slideshow(items: List<MediaItem>, title: String, slideshowSeconds: 
             modifier = Modifier.fillMaxWidth().background(Color(0x88000000)).padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onClose) { Icon(GalleryIcons.Close, "Cerrar presentación") }
+            IconButton(onClick = onClose) { Icon(GalleryIcons.Close, stringResource(R.string.close_slideshow)) }
             Text(title, fontSize = 20.sp, modifier = Modifier.weight(1f))
             Text("${pager.currentPage + 1}/${items.size}", color = Color(0xFFC8CAD0))
         }
     }
 }
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 internal fun CreateScreen(
     selectedItems: List<MediaItem>,
@@ -156,17 +160,17 @@ internal fun CreateScreen(
     var slideshow by remember { mutableStateOf(false) }
     val images = selectedItems.filter { it.mimeType.startsWith("image/") }
     if (slideshow && selectedItems.isNotEmpty()) {
-        Slideshow(selectedItems, "Película instantánea") { slideshow = false }
+        Slideshow(selectedItems, stringResource(R.string.instant_movie)) { slideshow = false }
         return
     }
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        item { DestinationTitle("Crear") }
+        item { DestinationTitle(stringResource(R.string.create)) }
         item {
             Text(
-                "Selecciona elementos en Fotos manteniendo pulsada una miniatura. Las creaciones se guardan como copias nuevas.",
+                stringResource(R.string.create_help),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(bottom = 8.dp),
             )
@@ -182,9 +186,9 @@ internal fun CreateScreen(
         }
         item {
             CreationCard(
-                title = "Collage",
-                description = "Combina de 2 a 9 imágenes en una composición cuadrada de 1600 x 1600.",
-                action = if (creating) "Guardando..." else "Crear collage",
+                title = stringResource(R.string.collage),
+                description = stringResource(R.string.collage_desc),
+                action = if (creating) stringResource(R.string.saving) else stringResource(R.string.create_collage),
                 enabled = images.size in 2..9 && !creating,
             ) {
                 scope.launch {
@@ -192,26 +196,26 @@ internal fun CreateScreen(
                     runCatching {
                         withContext(Dispatchers.IO) { CollageRenderer.create(context.contentResolver, images) }
                     }.onSuccess {
-                        onMessage("Collage guardado en Pictures/Galeria")
+                        onMessage(context.getString(R.string.collage_saved))
                         onReload()
-                    }.onFailure { onMessage("No se pudo crear el collage: ${it.message}") }
+                    }.onFailure { onMessage(context.getString(R.string.collage_error, it.message)) }
                     creating = false
                 }
             }
         }
         item {
             CreationCard(
-                title = "Edición de imagen",
-                description = "Gira, voltea y ajusta filtro, brillo y contraste sin modificar el original.",
-                action = "Editar imagen",
+                title = stringResource(R.string.image_edit),
+                description = stringResource(R.string.image_edit_desc),
+                action = stringResource(R.string.edit_image),
                 enabled = images.size == 1,
             ) { onEdit(images.first()) }
         }
         item {
             CreationCard(
-                title = "Imagen a vídeo",
-                description = "Exporta las imágenes seleccionadas como MP4, cuatro segundos por imagen y sin alterar los originales.",
-                action = if (creating) "Exportando..." else "Exportar MP4",
+                title = stringResource(R.string.image_to_video),
+                description = stringResource(R.string.image_to_video_desc),
+                action = if (creating) stringResource(R.string.exporting) else stringResource(R.string.export_mp4),
                 enabled = images.size in 1..30 && !creating,
             ) {
                 creating = true
@@ -224,12 +228,12 @@ internal fun CreateScreen(
                                     MediaStoreOperations.importFile(context.contentResolver, file, "Pelicula_${System.currentTimeMillis()}.mp4", "video/mp4")
                                 }
                             }.onSuccess {
-                                onMessage("Vídeo guardado en Movies/Galeria")
+                                onMessage(context.getString(R.string.video_saved))
                                 onReload()
-                            }.onFailure { onMessage("No se pudo importar el vídeo: ${it.message}") }
+                            }.onFailure { onMessage(context.getString(R.string.video_import_error, it.message)) }
                             file.delete()
                         }.onFailure {
-                            onMessage("No se pudo exportar el vídeo: ${it.message}")
+                            onMessage(context.getString(R.string.video_export_error, it.message))
                         }
                         creating = false
                     }
@@ -238,17 +242,17 @@ internal fun CreateScreen(
         }
         item {
             CreationCard(
-                title = "Presentación instantánea",
-                description = "Reproduce una presentación de cuatro segundos por elemento.",
-                action = "Reproducir",
+                title = stringResource(R.string.instant_slideshow),
+                description = stringResource(R.string.instant_slideshow_desc),
+                action = stringResource(R.string.play),
                 enabled = selectedItems.isNotEmpty(),
             ) { slideshow = true }
         }
         item {
             CreationCard(
-                title = "Editor de vídeo",
-                description = "Recorta el inicio y el fin y guarda una copia MP4 sin modificar el original.",
-                action = "Recortar vídeo",
+                title = stringResource(R.string.video_editor),
+                description = stringResource(R.string.video_editor_desc),
+                action = stringResource(R.string.trim_video),
                 enabled = selectedItems.count { it.mimeType.startsWith("video/") } == 1,
             ) {
                 onEditVideo(selectedItems.first { it.mimeType.startsWith("video/") })
@@ -256,7 +260,7 @@ internal fun CreateScreen(
         }
         item {
             Text(
-                "La generación de vídeo con IA y la comunidad de fotos dependen de servicios privados de MagicOS y no se simulan como funciones locales.",
+                stringResource(R.string.ai_notice),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp,
                 modifier = Modifier.padding(vertical = 12.dp),

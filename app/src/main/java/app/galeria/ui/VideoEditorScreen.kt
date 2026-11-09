@@ -1,5 +1,6 @@
 package app.galeria.ui
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.view.ViewGroup
 import android.widget.MediaController
@@ -28,9 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import app.galeria.R
 import app.galeria.data.MediaItem
 import app.galeria.data.MediaStoreOperations
 import app.galeria.data.VideoTrimSpec
@@ -41,6 +44,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun VideoEditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> Unit) {
@@ -58,8 +62,8 @@ internal fun VideoEditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: ()
             modifier = Modifier.fillMaxWidth().padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onClose, enabled = !saving) { Icon(GalleryIcons.Close, "Cerrar editor de vídeo") }
-            Text("Recortar vídeo", fontSize = 22.sp, modifier = Modifier.weight(1f))
+            IconButton(onClick = onClose, enabled = !saving) { Icon(GalleryIcons.Close, stringResource(R.string.close_video_editor)) }
+            Text(stringResource(R.string.trim_video), fontSize = 22.sp, modifier = Modifier.weight(1f))
             if (saving) CircularProgressIndicator(modifier = Modifier.padding(8.dp))
         }
         AndroidView(
@@ -77,9 +81,9 @@ internal fun VideoEditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: ()
         )
         Column(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
             if (duration <= 0L) {
-                Text("No se pudo determinar la duración del vídeo", color = Color(0xFFFF8A80))
+                Text(stringResource(R.string.video_duration_unknown), color = Color(0xFFFF8A80))
             } else {
-                Text("Inicio ${formatTime(start)}   Fin ${formatTime(end)}   Duración ${formatTime(end - start)}")
+                Text(stringResource(R.string.video_trim_range, formatTime(start), formatTime(end), formatTime(end - start)))
                 RangeSlider(
                     value = start.toFloat()..end.toFloat(),
                     onValueChange = { range ->
@@ -115,12 +119,12 @@ internal fun VideoEditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: ()
                                                 onSaved()
                                             }.onFailure {
                                                 trimmed.delete()
-                                                error = "No se pudo guardar el recorte: ${it.message}"
+                                                error = context.getString(R.string.trim_save_error, it.message)
                                                 saving = false
                                             }
                                         },
                                         onFailure = {
-                                            error = "No se pudo recortar: ${it.message}"
+                                            error = context.getString(R.string.trim_error, it.message)
                                             saving = false
                                         },
                                     )
@@ -128,11 +132,11 @@ internal fun VideoEditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: ()
                             }
                         }.onFailure {
                             output.delete()
-                            error = "No se pudo iniciar el recorte: ${it.message}"
+                            error = context.getString(R.string.trim_start_error, it.message)
                             saving = false
                         }
                     },
-                ) { Text(if (saving) "Exportando..." else "Guardar recorte como copia") }
+                ) { Text(stringResource(if (saving) R.string.exporting else R.string.save_trim_copy)) }
             }
             error?.let { Text(it, color = Color(0xFFFF8A80), modifier = Modifier.padding(top = 8.dp)) }
         }

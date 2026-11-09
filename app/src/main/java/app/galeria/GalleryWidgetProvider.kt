@@ -21,14 +21,14 @@ class GalleryWidgetProvider : AppWidgetProvider() {
             try {
                 val item = WidgetMediaSelection.latestImage(MediaStoreRepository(applicationContext).load())
                 if (item == null) {
-                    views.setTextViewText(R.id.widget_title, "No hay fotos disponibles")
+                    views.setTextViewText(R.id.widget_title, applicationContext.getString(R.string.widget_no_photos))
                 } else {
                     val thumbnail = applicationContext.contentResolver.loadThumbnail(Uri.parse(item.uri), Size(1024, 1024), null)
                     views.setImageViewBitmap(R.id.widget_image, thumbnail)
                     views.setTextViewText(R.id.widget_title, item.displayName)
                 }
             } catch (_: Exception) {
-                views.setTextViewText(R.id.widget_title, "Abre Galería para conceder acceso a tus fotos")
+                views.setTextViewText(R.id.widget_title, applicationContext.getString(R.string.widget_grant_access))
             }
             val openIntent = Intent(applicationContext, MainActivity::class.java)
             val pendingIntent = PendingIntent.getActivity(

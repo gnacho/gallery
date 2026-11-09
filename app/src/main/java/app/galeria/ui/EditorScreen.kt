@@ -48,9 +48,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.galeria.R
 import app.galeria.data.BorderSpec
 import app.galeria.data.CropSpec
 import app.galeria.data.DrawingStroke
@@ -86,6 +88,7 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
     var showWatermarkDialog by remember { mutableStateOf(false) }
     var draftWatermark by remember { mutableStateOf("") }
     var cropIndex by remember { mutableStateOf(0) }
+    val lunarNight = stringResource(R.string.lunar_night)
     val source by produceState<Bitmap?>(initialValue = null, item.uri) {
         value = runCatching {
             withContext(Dispatchers.IO) { resolver.loadThumbnail(Uri.parse(item.uri), Size(2048, 2048), null) }
@@ -102,8 +105,8 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
             modifier = Modifier.fillMaxWidth().padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onClose, enabled = !saving) { Icon(GalleryIcons.Close, "Cerrar editor") }
-            Text("Editar", fontSize = 22.sp, modifier = Modifier.weight(1f))
+            IconButton(onClick = onClose, enabled = !saving) { Icon(GalleryIcons.Close, stringResource(R.string.close_editor)) }
+            Text(stringResource(R.string.edit), fontSize = 22.sp, modifier = Modifier.weight(1f))
             TextButton(
                 onClick = {
                     state = state.reset()
@@ -111,7 +114,7 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
                     tool = EditorTool.NONE
                 },
                 enabled = !saving,
-            ) { Text("Restablecer") }
+            ) { Text(stringResource(R.string.reset)) }
             TextButton(
                 enabled = source != null && !saving,
                 onClick = {
@@ -128,13 +131,13 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
                             }
                     }
                 },
-            ) { Text("Guardar copia") }
+            ) { Text(stringResource(R.string.save_copy)) }
         }
         Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
             when {
                 preview != null -> Image(
                     bitmap = requireNotNull(preview).asImageBitmap(),
-                    contentDescription = "Vista previa editada",
+                    contentDescription = stringResource(R.string.edit_preview),
                     modifier = Modifier
                         .fillMaxSize()
                         .onSizeChanged { viewSize = it }
@@ -222,7 +225,7 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
             }
             if (tool != EditorTool.NONE) {
                 Text(
-                    if (tool == EditorTool.DRAW) "Arrastra para dibujar en rojo" else "Arrastra un rectángulo para pixelar",
+                    if (tool == EditorTool.DRAW) stringResource(R.string.draw_red_hint) else stringResource(R.string.mosaic_hint),
                     modifier = Modifier.align(Alignment.BottomCenter).background(Color(0xAA000000)).padding(12.dp),
                 )
             }
@@ -232,25 +235,25 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
             modifier = Modifier.fillMaxWidth().heightIn(max = 380.dp)
                 .verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 8.dp),
         ) {
-            Text("Brillo", fontSize = 13.sp)
+            Text(stringResource(R.string.brightness), fontSize = 13.sp)
             Slider(
                 value = state.brightness,
                 onValueChange = { state = state.copy(brightness = it) },
                 valueRange = -100f..100f,
             )
-            Text("Contraste", fontSize = 13.sp)
+            Text(stringResource(R.string.contrast), fontSize = 13.sp)
             Slider(
                 value = state.contrast,
                 onValueChange = { state = state.copy(contrast = it) },
                 valueRange = 0.5f..2f,
             )
-            Text("Saturación", fontSize = 13.sp)
+            Text(stringResource(R.string.saturation), fontSize = 13.sp)
             Slider(
                 value = state.saturation,
                 onValueChange = { state = state.copy(saturation = it) },
                 valueRange = 0f..2f,
             )
-            Text("Calidez", fontSize = 13.sp)
+            Text(stringResource(R.string.warmth), fontSize = 13.sp)
             Slider(
                 value = state.warmth,
                 onValueChange = { state = state.copy(warmth = it) },
@@ -264,17 +267,17 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
                         label = {
                             Text(
                                 when (filter) {
-                                    ImageFilter.ORIGINAL -> "Original"
-                                    ImageFilter.MONO -> "Monocromo"
-                                    ImageFilter.SEPIA -> "Sepia"
-                                    ImageFilter.VIVID -> "Vívido"
+                                    ImageFilter.ORIGINAL -> stringResource(R.string.filter_original)
+                                    ImageFilter.MONO -> stringResource(R.string.filter_mono)
+                                    ImageFilter.SEPIA -> stringResource(R.string.filter_sepia)
+                                    ImageFilter.VIVID -> stringResource(R.string.filter_vivid)
                                 },
                             )
                         },
                     )
                 }
             }
-            Text("Intensidad del filtro", fontSize = 13.sp)
+            Text(stringResource(R.string.filter_intensity), fontSize = 13.sp)
             Slider(
                 value = state.filterIntensity,
                 onValueChange = { state = state.copy(filterIntensity = it) },
@@ -286,11 +289,11 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
             ) {
                 TextButton(onClick = { state = state.rotateCounterClockwise() }) {
                     Icon(GalleryIcons.Rotate, null)
-                    Text("Girar")
+                    Text(stringResource(R.string.rotate))
                 }
                 TextButton(onClick = { state = state.toggleFlip() }) {
                     Icon(GalleryIcons.Flip, null)
-                    Text("Voltear")
+                    Text(stringResource(R.string.flip))
                 }
                 TextButton(onClick = {
                     cropIndex = (cropIndex + 1) % 4
@@ -315,21 +318,21 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
                     }
                 }) {
                     Icon(GalleryIcons.Crop, null)
-                    Text(if (cropIndex == 0) "Recortar" else "Recorte ${cropIndex}")
+                    Text(if (cropIndex == 0) stringResource(R.string.crop) else stringResource(R.string.crop_index, cropIndex))
                 }
                 TextButton(onClick = { showTextDialog = true }) {
                     Icon(GalleryIcons.Text, null)
-                    Text("Texto")
+                    Text(stringResource(R.string.text_tool))
                 }
                 FilterChip(
                     selected = tool == EditorTool.DRAW,
                     onClick = { tool = if (tool == EditorTool.DRAW) EditorTool.NONE else EditorTool.DRAW },
-                    label = { Text("Dibujar") },
+                    label = { Text(stringResource(R.string.draw_tool)) },
                 )
                 FilterChip(
                     selected = tool == EditorTool.MOSAIC,
                     onClick = { tool = if (tool == EditorTool.MOSAIC) EditorTool.NONE else EditorTool.MOSAIC },
-                    label = { Text("Mosaico") },
+                    label = { Text(stringResource(R.string.mosaic_tool)) },
                 )
                 TextButton(
                     onClick = {
@@ -337,28 +340,28 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
                             border = if (state.border == null) BorderSpec(0.03f, android.graphics.Color.WHITE) else null,
                         )
                     },
-                ) { Text("Borde") }
+                ) { Text(stringResource(R.string.border)) }
                 TextButton(
                     onClick = {
                         draftWatermark = state.watermark?.text.orEmpty()
                         showWatermarkDialog = true
                     },
-                ) { Text("Marca") }
+                ) { Text(stringResource(R.string.watermark)) }
                 TextButton(onClick = {
-                    state = state.copy(watermark = WatermarkSpec("Noche lunar", lunar = true))
-                }) { Text("Noche lunar") }
+                    state = state.copy(watermark = WatermarkSpec(lunarNight, lunar = true))
+                }) { Text(lunarNight) }
             }
         }
     }
     if (showTextDialog) {
         AlertDialog(
             onDismissRequest = { showTextDialog = false },
-            title = { Text("Añadir texto") },
+            title = { Text(stringResource(R.string.add_text)) },
             text = {
                 OutlinedTextField(
                     value = draftText,
                     onValueChange = { draftText = it },
-                    label = { Text("Texto sobre la imagen") },
+                    label = { Text(stringResource(R.string.text_on_image)) },
                     singleLine = true,
                 )
             },
@@ -372,20 +375,20 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
                         draftText = ""
                         showTextDialog = false
                     },
-                ) { Text("Añadir") }
+                ) { Text(stringResource(R.string.add)) }
             },
-            dismissButton = { TextButton(onClick = { showTextDialog = false }) { Text("Cancelar") } },
+            dismissButton = { TextButton(onClick = { showTextDialog = false }) { Text(stringResource(R.string.cancel)) } },
         )
     }
     if (showWatermarkDialog) {
         AlertDialog(
             onDismissRequest = { showWatermarkDialog = false },
-            title = { Text("Marca de agua") },
+            title = { Text(stringResource(R.string.watermark_dialog)) },
             text = {
                 OutlinedTextField(
                     value = draftWatermark,
                     onValueChange = { draftWatermark = it },
-                    label = { Text("Texto de la marca") },
+                    label = { Text(stringResource(R.string.watermark_text_label)) },
                     singleLine = true,
                 )
             },
@@ -396,9 +399,9 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
                         state = state.copy(watermark = WatermarkSpec(draftWatermark.trim()))
                         showWatermarkDialog = false
                     },
-                ) { Text("Aplicar") }
+                ) { Text(stringResource(R.string.apply)) }
             },
-            dismissButton = { TextButton(onClick = { showWatermarkDialog = false }) { Text("Cancelar") } },
+            dismissButton = { TextButton(onClick = { showWatermarkDialog = false }) { Text(stringResource(R.string.cancel)) } },
         )
     }
 }

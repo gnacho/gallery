@@ -12,8 +12,14 @@ class GalleryNavigationTest {
     @Test
     fun exposesTheOriginalRailOrder() {
         assertEquals(
-            listOf("Galería", "Fotos", "Recuerdos", "Crear", "Álbumes"),
-            GalleryNavigation.railLabels,
+            listOf(
+                GalleryDestination.Gallery,
+                GalleryDestination.Photos,
+                GalleryDestination.Memories,
+                GalleryDestination.Create,
+                GalleryDestination.Albums,
+            ),
+            GalleryDestination.entries,
         )
     }
 

@@ -1,5 +1,6 @@
 package app.galeria.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.ImageDecoder
 import android.graphics.drawable.AnimatedImageDrawable
@@ -53,6 +54,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -60,6 +62,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.print.PrintHelper
+import app.galeria.R
 import app.galeria.data.MediaDetails
 import app.galeria.data.MediaDetailsReader
 import app.galeria.data.MediaItem
@@ -85,6 +88,7 @@ private fun ViewerAction(icon: ImageVector, label: String, onClick: () -> Unit) 
     }
 }
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MediaViewer(
@@ -149,18 +153,18 @@ internal fun MediaViewer(
                 .background(Color(0x99000000)).padding(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onClose) { Icon(GalleryIcons.Back, "Volver") }
+            IconButton(onClick = onClose) { Icon(GalleryIcons.Back, stringResource(R.string.back)) }
             Column(modifier = Modifier.weight(1f)) {
                 Text(item.displayName, color = Color.White, maxLines = 1, fontSize = 15.sp)
                 date?.let { Text(it, fontSize = 12.sp, color = Color(0xFFC8CAD0)) }
             }
             if (comparing) {
-                IconButton(onClick = { comparing = false }) { Icon(GalleryIcons.Compare, "Terminar comparación") }
+                IconButton(onClick = { comparing = false }) { Icon(GalleryIcons.Compare, stringResource(R.string.end_compare)) }
             } else {
                 TextButton(
                     onClick = { detailsVisible = true },
                     colors = ButtonDefaults.textButtonColors(contentColor = Color.White),
-                ) { Text("Detalles") }
+                ) { Text(stringResource(R.string.details)) }
             }
         }
         Row(
@@ -169,22 +173,22 @@ internal fun MediaViewer(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            ViewerAction(GalleryIcons.Share, "Compartir") { onShare(listOf(item)) }
-            ViewerAction(GalleryIcons.Favorite, "Favorito") { onFavorite(listOf(item)) }
+            ViewerAction(GalleryIcons.Share, stringResource(R.string.share)) { onShare(listOf(item)) }
+            ViewerAction(GalleryIcons.Favorite, stringResource(R.string.favorite)) { onFavorite(listOf(item)) }
             if (item.mimeType.startsWith("image/")) {
-                ViewerAction(GalleryIcons.Edit, "Editar") { onEdit(item) }
+                ViewerAction(GalleryIcons.Edit, stringResource(R.string.edit)) { onEdit(item) }
             }
             if (item.mimeType.startsWith("video/")) {
-                ViewerAction(GalleryIcons.Edit, "Recortar") { onEditVideo(item) }
+                ViewerAction(GalleryIcons.Edit, stringResource(R.string.trim)) { onEditVideo(item) }
             }
-            ViewerAction(GalleryIcons.Delete, if (item.isTrashed) "Restaurar" else "Eliminar") {
+            ViewerAction(GalleryIcons.Delete, if (item.isTrashed) stringResource(R.string.restore) else stringResource(R.string.delete)) {
                 onTrash(listOf(item))
             }
             Box {
-                ViewerAction(GalleryIcons.More, "Más") { moreVisible = true }
+                ViewerAction(GalleryIcons.More, stringResource(R.string.more)) { moreVisible = true }
                 DropdownMenu(expanded = moreVisible, onDismissRequest = { moreVisible = false }) {
                     DropdownMenuItem(
-                        text = { Text(if (playing) "Detener presentación" else "Presentación") },
+                        text = { Text(stringResource(if (playing) R.string.stop_slideshow else R.string.slideshow)) },
                         leadingIcon = { Icon(GalleryIcons.Slideshow, null) },
                         onClick = {
                             playing = !playing
@@ -192,7 +196,7 @@ internal fun MediaViewer(
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text("Comparar con la siguiente") },
+                        text = { Text(stringResource(R.string.compare_next)) },
                         leadingIcon = { Icon(GalleryIcons.Compare, null) },
                         onClick = {
                             comparing = true
@@ -202,7 +206,7 @@ internal fun MediaViewer(
                     )
                     if (item.mimeType.startsWith("image/")) {
                         DropdownMenuItem(
-                            text = { Text("Establecer como fondo") },
+                            text = { Text(stringResource(R.string.set_wallpaper)) },
                             leadingIcon = { Icon(GalleryIcons.Wallpaper, null) },
                             onClick = {
                                 moreVisible = false
@@ -211,11 +215,11 @@ internal fun MediaViewer(
                                     val intent = android.app.WallpaperManager.getInstance(context)
                                         .getCropAndSetWallpaperIntent(uri)
                                     context.startActivity(intent)
-                                }.onFailure { onMessage("No se pudo abrir el selector de fondo") }
+                                }.onFailure { onMessage(context.getString(R.string.wallpaper_failed)) }
                             },
                         )
                         DropdownMenuItem(
-                            text = { Text("Imprimir") },
+                            text = { Text(stringResource(R.string.print)) },
                             leadingIcon = { Icon(GalleryIcons.Print, null) },
                             onClick = {
                                 moreVisible = false
@@ -224,31 +228,31 @@ internal fun MediaViewer(
                                         scaleMode = PrintHelper.SCALE_MODE_FIT
                                         printBitmap(item.displayName, Uri.parse(item.uri))
                                     }
-                                }.onFailure { onMessage("No se pudo iniciar la impresión") }
+                                }.onFailure { onMessage(context.getString(R.string.print_failed)) }
                             },
                         )
                     }
                     DropdownMenuItem(
-                        text = { Text("Abrir con") },
+                        text = { Text(stringResource(R.string.open_with)) },
                         onClick = {
                             moreVisible = false
                             val intent = Intent(Intent.ACTION_VIEW).apply {
                                 setDataAndType(Uri.parse(item.uri), item.mimeType)
                                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                             }
-                            runCatching { context.startActivity(Intent.createChooser(intent, "Abrir con")) }
-                                .onFailure { onMessage("No hay una aplicación compatible") }
+                            runCatching { context.startActivity(Intent.createChooser(intent, context.getString(R.string.open_with))) }
+                                .onFailure { onMessage(context.getString(R.string.no_compatible_app)) }
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text("Duplicar") },
+                        text = { Text(stringResource(R.string.duplicate)) },
                         onClick = {
                             moreVisible = false
                             onDuplicate(item)
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text("Renombrar") },
+                        text = { Text(stringResource(R.string.rename)) },
                         onClick = {
                             moreVisible = false
                             renameValue = item.displayName
@@ -256,7 +260,7 @@ internal fun MediaViewer(
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text("Editar nota") },
+                        text = { Text(stringResource(R.string.edit_note)) },
                         onClick = {
                             moreVisible = false
                             noteValue = notes[item.uri].orEmpty()
@@ -264,7 +268,7 @@ internal fun MediaViewer(
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text("Mover a privado") },
+                        text = { Text(stringResource(R.string.move_to_private)) },
                         leadingIcon = { Icon(GalleryIcons.Private, null) },
                         onClick = {
                             moreVisible = false
@@ -272,7 +276,7 @@ internal fun MediaViewer(
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text("Borrar definitivamente") },
+                        text = { Text(stringResource(R.string.delete_permanently)) },
                         onClick = {
                             moreVisible = false
                             onDelete(listOf(item))
@@ -290,12 +294,12 @@ internal fun MediaViewer(
     if (noteVisible) {
         AlertDialog(
             onDismissRequest = { noteVisible = false },
-            title = { Text("Nota de la foto") },
+            title = { Text(stringResource(R.string.note_title)) },
             text = {
                 OutlinedTextField(
                     value = noteValue,
                     onValueChange = { noteValue = it },
-                    label = { Text("Texto buscable") },
+                    label = { Text(stringResource(R.string.searchable_text)) },
                     minLines = 2,
                 )
             },
@@ -303,20 +307,20 @@ internal fun MediaViewer(
                 TextButton(onClick = {
                     noteVisible = false
                     onSaveNote(item, noteValue)
-                }) { Text("Guardar") }
+                }) { Text(stringResource(R.string.save)) }
             },
-            dismissButton = { TextButton(onClick = { noteVisible = false }) { Text("Cancelar") } },
+            dismissButton = { TextButton(onClick = { noteVisible = false }) { Text(stringResource(R.string.cancel)) } },
         )
     }
     if (renameVisible) {
         AlertDialog(
             onDismissRequest = { renameVisible = false },
-            title = { Text("Renombrar") },
+            title = { Text(stringResource(R.string.rename)) },
             text = {
                 OutlinedTextField(
                     value = renameValue,
                     onValueChange = { renameValue = it },
-                    label = { Text("Nombre") },
+                    label = { Text(stringResource(R.string.name)) },
                     singleLine = true,
                 )
             },
@@ -327,9 +331,9 @@ internal fun MediaViewer(
                         renameVisible = false
                         onRename(item, renameValue.trim())
                     },
-                ) { Text("Guardar") }
+                ) { Text(stringResource(R.string.save)) }
             },
-            dismissButton = { TextButton(onClick = { renameVisible = false }) { Text("Cancelar") } },
+            dismissButton = { TextButton(onClick = { renameVisible = false }) { Text(stringResource(R.string.cancel)) } },
         )
     }
 }
@@ -381,7 +385,7 @@ private fun VideoPlayer(item: MediaItem) {
             onClick = { speed = PlaybackSpeed.next(speed) },
             colors = ButtonDefaults.textButtonColors(contentColor = Color.White),
             modifier = Modifier.align(Alignment.CenterHorizontally),
-        ) { Text("Velocidad ${speed}x") }
+        ) { Text(stringResource(R.string.speed_x, speed)) }
     }
 }
 
@@ -416,7 +420,7 @@ private fun MediaDetailsPanel(item: MediaItem) {
     val context = LocalContext.current
     val details by produceState<MediaDetails?>(initialValue = null, item.uri) {
         value = runCatching {
-            withContext(Dispatchers.IO) { MediaDetailsReader.read(context.contentResolver, item) }
+            withContext(Dispatchers.IO) { MediaDetailsReader.read(context, item) }
         }.getOrNull()
     }
     val retention by produceState<TrashRetention?>(initialValue = null, item.uri, item.isTrashed) {
@@ -430,25 +434,25 @@ private fun MediaDetailsPanel(item: MediaItem) {
     }
     LazyColumn(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
         item {
-            Text("Detalles", fontSize = 26.sp, modifier = Modifier.padding(bottom = 12.dp))
-            DetailRow("Nombre", item.displayName)
-            DetailRow("Tipo", item.mimeType)
-            DetailRow("Tamaño", formatBytes(item.sizeBytes))
-            if (item.width > 0 && item.height > 0) DetailRow("Dimensiones", "${item.width} x ${item.height}")
-            item.durationMillis?.let { DetailRow("Duración", "${it / 1000} s") }
-            item.bucketName?.let { DetailRow("Álbum", it) }
-            DetailRow("Ubicación del archivo", item.uri)
+            Text(stringResource(R.string.details), fontSize = 26.sp, modifier = Modifier.padding(bottom = 12.dp))
+            DetailRow(stringResource(R.string.name), item.displayName)
+            DetailRow(stringResource(R.string.type), item.mimeType)
+            DetailRow(stringResource(R.string.size), formatBytes(item.sizeBytes))
+            if (item.width > 0 && item.height > 0) DetailRow(stringResource(R.string.dimensions), "${item.width} x ${item.height}")
+            item.durationMillis?.let { DetailRow(stringResource(R.string.duration), "${it / 1000} s") }
+            item.bucketName?.let { DetailRow(stringResource(R.string.album), it) }
+            DetailRow(stringResource(R.string.file_location), item.uri)
             retention?.let {
                 DetailRow(
-                    "Retención en papelera",
-                    if (it.expired) "Expirado según MediaStore" else "${it.remainingDays} días restantes",
+                    stringResource(R.string.trash_retention),
+                    if (it.expired) stringResource(R.string.expired_mediastore) else stringResource(R.string.days_remaining, it.remainingDays),
                 )
             }
         }
         details?.entries?.let { entries -> items(entries) { DetailRow(it.label, it.value) } }
         details?.let { value ->
             if (value.latitude != null && value.longitude != null) {
-                item { DetailRow("Coordenadas", "${value.latitude}, ${value.longitude}") }
+                item { DetailRow(stringResource(R.string.coordinates), "${value.latitude}, ${value.longitude}") }
             }
             if (value.histogram.any { it > 0 }) {
                 item { Histogram(value.histogram) }
@@ -469,7 +473,7 @@ private fun DetailRow(label: String, value: String) {
 private fun Histogram(values: IntArray) {
     val maximum = values.max().coerceAtLeast(1)
     Column(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
-        Text("Histograma de luminancia", fontSize = 16.sp)
+        Text(stringResource(R.string.histogram), fontSize = 16.sp)
         Canvas(modifier = Modifier.fillMaxWidth().height(110.dp).padding(top = 8.dp)) {
             val barWidth = size.width / values.size
             values.forEachIndexed { index, value ->

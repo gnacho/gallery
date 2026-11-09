@@ -110,7 +110,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
             if (loaded.isEmpty()) {
-                loadError = if (shouldImport) "No se pudieron importar los elementos compartidos" else "No se pudieron abrir los elementos compartidos"
+                loadError = if (shouldImport) getString(R.string.import_shared_failed) else getString(R.string.open_shared_failed)
             } else {
                 galleryState = GalleryNavigation.mediaLoaded(galleryState, loaded, ZoneId.systemDefault())
                 if (shouldImport) {

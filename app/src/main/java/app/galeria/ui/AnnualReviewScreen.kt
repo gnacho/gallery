@@ -25,7 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.galeria.R
 import app.galeria.data.AnnualReviewGenerator
 import app.galeria.data.MediaItem
 import java.time.ZoneId
@@ -39,11 +41,11 @@ internal fun AnnualReviewScreen(items: List<MediaItem>, onOpen: (MediaItem) -> U
     val review = remember(items, selectedYear) { AnnualReviewGenerator.build(items, selectedYear, zone) }
     Column(modifier = Modifier.fillMaxSize().padding(18.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onClose) { Icon(GalleryIcons.Back, "Volver a Recuerdos") }
-            Text("Resumen anual", modifier = Modifier.weight(1f))
+            IconButton(onClick = onClose) { Icon(GalleryIcons.Back, stringResource(R.string.back_to_memories)) }
+            Text(stringResource(R.string.annual_summary), modifier = Modifier.weight(1f))
         }
         if (years.isEmpty()) {
-            MessageDestination("Sin fechas disponibles", "No hay elementos con fecha para crear un resumen anual.")
+            MessageDestination(stringResource(R.string.no_dates_title), stringResource(R.string.no_dates_message))
             return
         }
         LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -56,10 +58,10 @@ internal fun AnnualReviewScreen(items: List<MediaItem>, onOpen: (MediaItem) -> U
         review?.let { current ->
             Card(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
                 Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    Text("${current.imageCount} imágenes")
-                    Text("${current.videoCount} vídeos")
-                    Text("${current.favoriteCount} favoritos")
-                    Text("${current.monthCount} meses")
+                    Text(stringResource(R.string.images_count, current.imageCount))
+                    Text(stringResource(R.string.videos_count, current.videoCount))
+                    Text(stringResource(R.string.favorites_count, current.favoriteCount))
+                    Text(stringResource(R.string.months_count, current.monthCount))
                 }
             }
             LazyVerticalGrid(

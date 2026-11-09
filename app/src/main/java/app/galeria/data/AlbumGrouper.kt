@@ -9,13 +9,13 @@ data class AlbumSummary(
 )
 
 object AlbumGrouper {
-    fun group(items: List<MediaItem>): List<AlbumSummary> = items
+    fun group(items: List<MediaItem>, unnamedAlbumName: String = "Sin álbum"): List<AlbumSummary> = items
         .sortedWith(compareByDescending<MediaItem> { it.dateTakenMillis ?: Long.MIN_VALUE }.thenByDescending { it.id })
         .groupBy { it.bucketId }
         .map { (bucketId, albumItems) ->
             AlbumSummary(
                 id = bucketId,
-                name = albumItems.first().bucketName ?: "Sin álbum",
+                name = albumItems.first().bucketName ?: unnamedAlbumName,
                 cover = albumItems.first(),
                 count = albumItems.size,
                 items = albumItems,

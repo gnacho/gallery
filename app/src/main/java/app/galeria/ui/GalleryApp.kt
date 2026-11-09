@@ -1,5 +1,6 @@
 package app.galeria.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
 import android.os.CancellationSignal
@@ -72,6 +73,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun GalleryApp(
     state: GalleryUiState,
@@ -134,7 +136,7 @@ fun GalleryApp(
         if (result.resultCode == android.app.Activity.RESULT_OK) {
             pendingRename?.let { (item, newName) ->
                 runCatching { MediaStoreOperations.rename(resolver, item, newName) }
-                    .onFailure { message = "No se pudo renombrar" }
+                    .onFailure { message = context.getString(R.string.rename_failed) }
             }
             pendingRename = null
             if (moveBatch != null) {
@@ -145,13 +147,13 @@ fun GalleryApp(
                         }
                     }.onSuccess { changed ->
                         selection = selection.clear()
-                        message = "$changed elementos movidos a ${moveBatch.second.albumName.trim()}"
+                        message = context.getString(R.string.moved_to_album, changed, moveBatch.second.albumName.trim())
                         onReload()
-                    }.onFailure { message = "No se pudieron mover los elementos" }
+                    }.onFailure { message = context.getString(R.string.move_failed) }
                 }
             } else {
                 selection = selection.clear()
-                message = if (vaultBatch.isEmpty()) "Operación confirmada" else "Movido al cofre privado"
+                message = if (vaultBatch.isEmpty()) context.getString(R.string.operation_confirmed) else context.getString(R.string.moved_to_private)
                 if (vaultBatch.isNotEmpty()) onCloseViewer()
                 onReload()
             }
@@ -160,10 +162,10 @@ fun GalleryApp(
             if (vaultBatch.isNotEmpty()) {
                 scope.launch {
                     withContext(Dispatchers.IO) { vaultBatch.forEach { vault.value.rollback(it) } }
-                    message = "Operación cancelada. No se movió ningún elemento"
+                    message = context.getString(R.string.operation_cancelled_no_move)
                 }
             } else {
-                message = "Operación cancelada"
+                message = context.getString(R.string.operation_cancelled)
             }
         }
     }
@@ -172,7 +174,7 @@ fun GalleryApp(
     }
     val share: (List<MediaItem>) -> Unit = { selected ->
         if (selected.isNotEmpty()) {
-            context.startActivity(Intent.createChooser(ShareIntents.forItems(selected), "Compartir"))
+            context.startActivity(Intent.createChooser(ShareIntents.forItems(selected), context.getString(R.string.share)))
         }
     }
     val trash: (List<MediaItem>) -> Unit = { selected ->
@@ -192,10 +194,10 @@ fun GalleryApp(
         scope.launch {
             runCatching { withContext(Dispatchers.IO) { MediaStoreOperations.duplicate(resolver, item) } }
                 .onSuccess {
-                    message = "Copia creada"
+                    message = context.getString(R.string.copy_created)
                     onReload()
                 }
-                .onFailure { message = "No se pudo duplicar" }
+                .onFailure { message = context.getString(R.string.duplicate_failed) }
         }
     }
     val rename: (MediaItem, String) -> Unit = { item, newName ->
@@ -210,7 +212,7 @@ fun GalleryApp(
                 runCatching { launchRequest(MediaStoreRequests.write(resolver, selected)) }
                     .onFailure {
                         pendingMove = null
-                        message = "No se pudo solicitar acceso de escritura"
+                        message = context.getString(R.string.write_access_failed)
                     }
             } else {
                 scope.launch {
@@ -218,9 +220,9 @@ fun GalleryApp(
                         withContext(Dispatchers.IO) { selected.forEach { MediaStoreOperations.copyToAlbum(resolver, it, plan) } }
                     }.onSuccess {
                         selection = selection.clear()
-                        message = "Copiado a ${plan.albumName.trim()}"
+                        message = context.getString(R.string.copied_to_album, plan.albumName.trim())
                         onReload()
-                    }.onFailure { message = "No se pudieron copiar los elementos" }
+                    }.onFailure { message = context.getString(R.string.copy_failed) }
                 }
             }
         }
@@ -236,7 +238,7 @@ fun GalleryApp(
                     MediaStoreRequests.delete(resolver, selected)
                 }.getOrElse {
                     withContext(Dispatchers.IO) { imported.forEach { vault.value.rollback(it) } }
-                    message = "No se pudo importar al cofre privado"
+                    message = context.getString(R.string.import_vault_failed)
                     return@launch
                 }
                 pendingVaultImports = imported
@@ -245,7 +247,7 @@ fun GalleryApp(
                 } catch (_: RuntimeException) {
                     pendingVaultImports = emptyList()
                     withContext(Dispatchers.IO) { imported.forEach { vault.value.rollback(it) } }
-                    message = "No se pudo solicitar el borrado de los originales"
+                    message = context.getString(R.string.delete_originals_failed)
                 }
             }
         }
@@ -260,14 +262,14 @@ fun GalleryApp(
     val openPrivate: () -> Unit = {
         val activity = context as? Activity
         if (!keyguard.isDeviceSecure) {
-            message = "Configura un bloqueo de pantalla para usar el cofre privado"
+            message = context.getString(R.string.vault_lock_required)
         } else if (activity == null) {
-            message = "No se pudo abrir la autenticación del dispositivo"
+            message = context.getString(R.string.auth_open_failed)
         } else {
             vaultAuthentication?.cancel()
             vaultAuthentication = VaultAuthenticator(activity).authenticate(
                 onSuccess = { vaultVisible = true },
-                onError = { message = "No se desbloqueó el cofre privado: $it" },
+                onError = { message = context.getString(R.string.vault_unlock_failed, it) },
             )
         }
     }
@@ -321,7 +323,7 @@ fun GalleryApp(
                 onSaved = {
                     videoEditingItem = null
                     selection = selection.clear()
-                    message = "Recorte guardado en Movies/Galeria"
+                    message = context.getString(R.string.trim_saved)
                     onReload()
                 },
             )
@@ -331,7 +333,7 @@ fun GalleryApp(
                 onSaved = {
                     editingItem = null
                     selection = selection.clear()
-                    message = "Copia editada guardada"
+                    message = context.getString(R.string.edit_copy_saved)
                     onReload()
                 },
             )
@@ -359,7 +361,7 @@ fun GalleryApp(
                 onSaveNote = { item, note ->
                     notesStore.set(item.uri, note)
                     notes = notesStore.all()
-                    message = if (note.isBlank()) "Nota eliminada" else "Nota guardada"
+                    message = if (note.isBlank()) context.getString(R.string.note_deleted) else context.getString(R.string.note_saved)
                 },
             )
             else -> Row(modifier = Modifier.fillMaxSize()) {
@@ -434,12 +436,12 @@ fun GalleryApp(
         if (transferDialogVisible) {
             AlertDialog(
                 onDismissRequest = { transferDialogVisible = false },
-                title = { Text(if (transferIsMove) "Mover a álbum" else "Copiar a álbum") },
+                title = { Text(stringResource(if (transferIsMove) R.string.move_to_album else R.string.copy_to_album)) },
                 text = {
                     OutlinedTextField(
                         value = transferAlbumName,
                         onValueChange = { transferAlbumName = it },
-                        label = { Text("Nombre del álbum de destino") },
+                        label = { Text(stringResource(R.string.destination_album_name)) },
                         singleLine = true,
                     )
                 },
@@ -452,22 +454,22 @@ fun GalleryApp(
                                     transferToAlbum(selectedItems, plan, transferIsMove)
                                     transferDialogVisible = false
                                 }
-                                .onFailure { message = "El nombre del álbum no es válido" }
+                                .onFailure { message = context.getString(R.string.invalid_album_name) }
                         },
-                    ) { Text(if (transferIsMove) "Mover" else "Copiar") }
+                    ) { Text(stringResource(if (transferIsMove) R.string.move else R.string.copy)) }
                 },
-                dismissButton = { TextButton(onClick = { transferDialogVisible = false }) { Text("Cancelar") } },
+                dismissButton = { TextButton(onClick = { transferDialogVisible = false }) { Text(stringResource(R.string.cancel)) } },
             )
         }
         if (albumDialogVisible) {
             AlertDialog(
                 onDismissRequest = { albumDialogVisible = false },
-                title = { Text(if (renamingAlbum == null) "Nuevo álbum" else "Renombrar álbum") },
+                title = { Text(stringResource(if (renamingAlbum == null) R.string.new_album else R.string.rename_album_dialog)) },
                 text = {
                     OutlinedTextField(
                         value = albumName,
                         onValueChange = { albumName = it },
-                        label = { Text("Nombre del álbum") },
+                        label = { Text(stringResource(R.string.album_name_label)) },
                         singleLine = true,
                     )
                 },
@@ -484,32 +486,32 @@ fun GalleryApp(
                             albumName = ""
                             renamingAlbum = null
                             albumDialogVisible = false
-                            message = "Álbum actualizado"
+                            message = context.getString(R.string.album_updated)
                         },
-                    ) { Text(if (renamingAlbum == null) "Crear" else "Guardar") }
+                    ) { Text(stringResource(if (renamingAlbum == null) R.string.create else R.string.save)) }
                 },
-                dismissButton = { TextButton(onClick = { albumDialogVisible = false }) { Text("Cancelar") } },
+                dismissButton = { TextButton(onClick = { albumDialogVisible = false }) { Text(stringResource(R.string.cancel)) } },
             )
         }
         albumPendingDeletion?.let { album ->
             AlertDialog(
                 onDismissRequest = { albumPendingDeletion = null },
-                title = { Text("Eliminar álbum") },
-                text = { Text("Se quitará la agrupación $album. No se borrará ninguna foto ni vídeo.") },
+                title = { Text(stringResource(R.string.delete_album)) },
+                text = { Text(stringResource(R.string.delete_album_confirm, album)) },
                 confirmButton = {
                     TextButton(onClick = {
                         updateOrganizer(organizer.deleteAlbum(album))
                         albumPendingDeletion = null
-                        message = "Álbum eliminado. Los elementos siguen en sus carpetas"
-                    }) { Text("Eliminar") }
+                        message = context.getString(R.string.album_deleted)
+                    }) { Text(stringResource(R.string.delete)) }
                 },
-                dismissButton = { TextButton(onClick = { albumPendingDeletion = null }) { Text("Cancelar") } },
+                dismissButton = { TextButton(onClick = { albumPendingDeletion = null }) { Text(stringResource(R.string.cancel)) } },
             )
         }
         message?.let {
             Snackbar(
                 modifier = Modifier.align(Alignment.BottomCenter).padding(20.dp),
-                dismissAction = { TextButton(onClick = { message = null }) { Text("Cerrar") } },
+                dismissAction = { TextButton(onClick = { message = null }) { Text(stringResource(R.string.close)) } },
             ) { Text(it) }
         }
     }
@@ -554,7 +556,7 @@ private fun GalleryContent(
 ) {
     when (state.destination) {
         GalleryDestination.Gallery, GalleryDestination.Photos -> TimelineScreen(
-            title = if (state.destination == GalleryDestination.Gallery) "Galería" else "Fotos",
+            title = if (state.destination == GalleryDestination.Gallery) stringResource(R.string.gallery) else stringResource(R.string.photos),
             items = timelineItems,
             notes = notes,
             expanded = expanded,
@@ -635,10 +637,10 @@ private fun GalleryRail(
                 .padding(horizontal = 12.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(GalleryIcons.Settings, "Ajustes", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Icon(GalleryIcons.Settings, stringResource(R.string.settings), tint = MaterialTheme.colorScheme.onSurfaceVariant)
             if (expanded) {
                 Spacer(modifier = Modifier.width(12.dp))
-                Text("Ajustes", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.settings), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }
@@ -662,11 +664,11 @@ private fun RailItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = if (showLabel) Arrangement.Start else Arrangement.Center,
     ) {
-        Icon(destination.icon(), destination.label, tint = color, modifier = Modifier.size(24.dp))
+        Icon(destination.icon(), stringResource(destination.labelRes), tint = color, modifier = Modifier.size(24.dp))
         if (showLabel) {
             Spacer(modifier = Modifier.width(12.dp))
             Text(
-                destination.label,
+                stringResource(destination.labelRes),
                 color = color,
                 fontSize = 14.sp,
                 fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,

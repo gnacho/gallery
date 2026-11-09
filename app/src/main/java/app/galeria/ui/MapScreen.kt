@@ -1,5 +1,6 @@
 package app.galeria.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,8 +33,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import app.galeria.R
 import app.galeria.data.LocationCluster
 import app.galeria.data.LocationGrouper
 import app.galeria.data.MediaItem
@@ -46,6 +49,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 internal fun MapScreen(
     items: List<MediaItem>,
@@ -82,7 +86,7 @@ internal fun MapScreen(
         clusters.forEach { cluster ->
             val marker = Marker(map).apply {
                 position = GeoPoint(cluster.latitude, cluster.longitude)
-                title = "${cluster.items.size} elementos"
+                title = context.getString(R.string.album_items, cluster.items.size)
                 snippet = cluster.items.take(4).joinToString { it.displayName }
                 setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                 setOnMarkerClickListener { clicked, _ ->
@@ -109,16 +113,16 @@ internal fun MapScreen(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onClose) { Icon(GalleryIcons.Back, "Volver") }
-            Text("Mapa", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
-            Text("${clusters.sumOf { it.items.size }} ubicados", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            IconButton(onClick = onClose) { Icon(GalleryIcons.Back, stringResource(R.string.back)) }
+            Text(stringResource(R.string.map), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.located_count, clusters.sumOf { it.items.size }), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
             AndroidView(factory = { map }, modifier = Modifier.fillMaxSize())
             if (loading) LinearProgressIndicator(modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter))
             if (!loading && clusters.isEmpty()) {
                 Text(
-                    "No hay fotografías con coordenadas EXIF",
+                    stringResource(R.string.no_location_photos),
                     modifier = Modifier.align(Alignment.Center).background(Color(0xCC000000), RoundedCornerShape(12.dp)).padding(16.dp),
                     color = Color.White,
                 )
@@ -127,7 +131,7 @@ internal fun MapScreen(
         selected?.let { cluster ->
             Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
                 Text(
-                    "${cluster.items.size} elementos cerca de %.4f, %.4f".format(cluster.latitude, cluster.longitude),
+                    stringResource(R.string.cluster_near, cluster.items.size, cluster.latitude, cluster.longitude),
                     color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.padding(bottom = 8.dp),
                 )

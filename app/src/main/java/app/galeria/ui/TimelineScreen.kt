@@ -120,10 +120,10 @@ internal fun TimelineScreen(
                     Box(modifier = Modifier.weight(1f)) { DestinationTitle(title) }
                     if (selection.count == 0) {
                         IconButton(onClick = { searchVisible = !searchVisible }) {
-                            Icon(if (searchVisible) GalleryIcons.Close else GalleryIcons.Search, "Buscar")
+                            Icon(if (searchVisible) GalleryIcons.Close else GalleryIcons.Search, stringResource(R.string.search))
                         }
-                        IconButton(onClick = onMap) { Icon(GalleryIcons.Map, "Mapa") }
-                        IconButton(onClick = onPeople) { Icon(GalleryIcons.Person, "Personas") }
+                        IconButton(onClick = onMap) { Icon(GalleryIcons.Map, stringResource(R.string.map)) }
+                        IconButton(onClick = onPeople) { Icon(GalleryIcons.Person, stringResource(R.string.people)) }
                     }
                 }
             }
@@ -135,7 +135,7 @@ internal fun TimelineScreen(
                             onValueChange = { query = it },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
-                            placeholder = { Text("Nombre, álbum, tipo, año o nota") },
+                            placeholder = { Text(stringResource(R.string.search_placeholder)) },
                             leadingIcon = { Icon(GalleryIcons.Search, null) },
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                             keyboardActions = KeyboardActions(onSearch = { onHistory(history.record(query)) }),
@@ -160,20 +160,20 @@ internal fun TimelineScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         IconButton(onClick = { onSelection(selection.clear()) }) {
-                            Icon(GalleryIcons.Close, "Cancelar selección")
+                            Icon(GalleryIcons.Close, stringResource(R.string.cancel_selection))
                         }
-                        Text("${selection.count}", modifier = Modifier.weight(1f), fontWeight = FontWeight.SemiBold)
+                        Text(selection.count.toString(), modifier = Modifier.weight(1f), fontWeight = FontWeight.SemiBold)
                         IconButton(onClick = { onSelection(selection.selectAll(filtered.map { it.id })) }) {
-                            Icon(GalleryIcons.SelectAll, "Seleccionar todo")
+                            Icon(GalleryIcons.SelectAll, stringResource(R.string.select_all))
                         }
-                        IconButton(onClick = { onShare(selectedItems) }) { Icon(GalleryIcons.Share, "Compartir") }
-                        IconButton(onClick = { onFavorite(selectedItems) }) { Icon(GalleryIcons.Favorite, "Favoritos") }
-                        IconButton(onClick = { onTrash(selectedItems) }) { Icon(GalleryIcons.Delete, "Mover a papelera") }
+                        IconButton(onClick = { onShare(selectedItems) }) { Icon(GalleryIcons.Share, stringResource(R.string.share)) }
+                        IconButton(onClick = { onFavorite(selectedItems) }) { Icon(GalleryIcons.Favorite, stringResource(R.string.favorites)) }
+                        IconButton(onClick = { onTrash(selectedItems) }) { Icon(GalleryIcons.Delete, stringResource(R.string.move_to_trash)) }
                         Box {
-                            IconButton(onClick = { moreVisible = true }) { Icon(GalleryIcons.More, "Más") }
+                            IconButton(onClick = { moreVisible = true }) { Icon(GalleryIcons.More, stringResource(R.string.more)) }
                             DropdownMenu(expanded = moreVisible, onDismissRequest = { moreVisible = false }) {
                                 DropdownMenuItem(
-                                    text = { Text("Crear álbum") },
+                                    text = { Text(stringResource(R.string.create_album)) },
                                     leadingIcon = { Icon(GalleryIcons.Album, null) },
                                     onClick = {
                                         moreVisible = false
@@ -181,7 +181,7 @@ internal fun TimelineScreen(
                                     },
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Mover a álbum") },
+                                    text = { Text(stringResource(R.string.move_to_album)) },
                                     leadingIcon = { Icon(GalleryIcons.Album, null) },
                                     onClick = {
                                         moreVisible = false
@@ -189,7 +189,7 @@ internal fun TimelineScreen(
                                     },
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Copiar a álbum") },
+                                    text = { Text(stringResource(R.string.copy_to_album)) },
                                     leadingIcon = { Icon(GalleryIcons.Copy, null) },
                                     onClick = {
                                         moreVisible = false
@@ -197,7 +197,7 @@ internal fun TimelineScreen(
                                     },
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Mover a privado") },
+                                    text = { Text(stringResource(R.string.move_to_private)) },
                                     leadingIcon = { Icon(GalleryIcons.Private, null) },
                                     onClick = {
                                         moreVisible = false
@@ -205,7 +205,7 @@ internal fun TimelineScreen(
                                     },
                                 )
                                 DropdownMenuItem(
-                                    text = { Text("Borrar definitivamente") },
+                                    text = { Text(stringResource(R.string.delete_permanently)) },
                                     onClick = {
                                         moreVisible = false
                                         onDelete(selectedItems)
@@ -218,7 +218,7 @@ internal fun TimelineScreen(
             }
             if (filtered.isEmpty()) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
-                    MessageDestination("Sin resultados", "Prueba con otro nombre, álbum, tipo o año.")
+                    MessageDestination(stringResource(R.string.no_results_title), stringResource(R.string.no_results_message))
                 }
             } else {
                 sections.forEach { section ->
@@ -280,7 +280,7 @@ internal fun MediaGridCell(
             Box(modifier = Modifier.fillMaxSize().background(Color(0x66000000)))
             Icon(
                 GalleryIcons.SelectAll,
-                "Seleccionado",
+                stringResource(R.string.item_selected),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.align(Alignment.TopEnd).padding(8.dp).size(28.dp),
             )

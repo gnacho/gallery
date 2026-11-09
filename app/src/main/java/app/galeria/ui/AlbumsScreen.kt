@@ -32,15 +32,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.galeria.R
 import app.galeria.data.AlbumGrouper
 import app.galeria.data.MediaItem
 import app.galeria.data.MediaSelection
 import app.galeria.data.SearchHistory
 
-private data class AlbumDetail(val name: String, val items: List<MediaItem>)
+private data class AlbumDetail(val name: String, val items: List<MediaItem>, val isTrash: Boolean = false)
 
 @Composable
 internal fun AlbumsScreen(
@@ -68,17 +70,20 @@ internal fun AlbumsScreen(
     onMap: () -> Unit,
     onPeople: () -> Unit,
 ) {
-    val albums = remember(items) { AlbumGrouper.group(items) }
+    val unnamedAlbumName = stringResource(R.string.unnamed_album)
+    val favoritesName = stringResource(R.string.album_favorites)
+    val trashName = stringResource(R.string.album_trash)
+    val albums = remember(items) { AlbumGrouper.group(items, unnamedAlbumName) }
     var opened by remember { mutableStateOf<AlbumDetail?>(null) }
     if (opened != null) {
         val detail = requireNotNull(opened)
         BackHandler { opened = null }
         Column {
-            if (detail.name == "Eliminados" && detail.items.isNotEmpty()) {
+            if (detail.isTrash && detail.items.isNotEmpty()) {
                 TextButton(
                     onClick = { onDelete(detail.items) },
                     modifier = Modifier.fillMaxWidth(),
-                ) { Text("Vaciar papelera") }
+                ) { Text(stringResource(R.string.empty_trash)) }
             }
             Box(modifier = Modifier.weight(1f)) {
                 TimelineScreen(
@@ -112,18 +117,18 @@ internal fun AlbumsScreen(
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        item(span = { GridItemSpan(maxLineSpan) }) { DestinationTitle("Álbumes") }
+        item(span = { GridItemSpan(maxLineSpan) }) { DestinationTitle(stringResource(R.string.albums)) }
         item {
             SpecialAlbumCard(
-                title = "Favoritos",
+                title = favoritesName,
                 items = favoriteItems,
                 icon = GalleryIcons.Favorite,
-                onClick = { opened = AlbumDetail("Favoritos", favoriteItems) },
+                onClick = { opened = AlbumDetail(favoritesName, favoriteItems) },
             )
         }
         item {
             SpecialAlbumCard(
-                title = "Privado",
+                title = stringResource(R.string.album_private),
                 items = emptyList(),
                 icon = GalleryIcons.Private,
                 onClick = onOpenPrivate,
@@ -131,15 +136,15 @@ internal fun AlbumsScreen(
         }
         item {
             SpecialAlbumCard(
-                title = "Eliminados",
+                title = trashName,
                 items = trashItems,
                 icon = GalleryIcons.Delete,
-                onClick = { opened = AlbumDetail("Eliminados", trashItems) },
+                onClick = { opened = AlbumDetail(trashName, trashItems, isTrash = true) },
             )
         }
         if (albums.isEmpty()) {
             item(span = { GridItemSpan(maxLineSpan) }) {
-                MessageDestination("Sin álbumes", "Los álbumes se crean a partir de tus carpetas de imágenes y vídeos.")
+                MessageDestination(stringResource(R.string.no_albums_title), stringResource(R.string.no_albums_message))
             }
         } else {
             items(albums, key = { it.id }) { album ->
@@ -148,10 +153,10 @@ internal fun AlbumsScreen(
                     if (album.name in customAlbumNames) {
                         Row(modifier = Modifier.align(Alignment.TopStart).background(Color(0x88000000))) {
                             IconButton(onClick = { onRenameAlbum(album.name) }) {
-                                Icon(GalleryIcons.Edit, contentDescription = "Renombrar ${album.name}")
+                                Icon(GalleryIcons.Edit, contentDescription = stringResource(R.string.rename_album, album.name))
                             }
                             IconButton(onClick = { onDeleteAlbum(album.name) }) {
-                                Icon(GalleryIcons.Delete, contentDescription = "Eliminar álbum ${album.name}")
+                                Icon(GalleryIcons.Delete, contentDescription = stringResource(R.string.delete_album_named, album.name))
                             }
                         }
                     }
@@ -159,7 +164,7 @@ internal fun AlbumsScreen(
                         onClick = { onHideAlbum(album.id) },
                         modifier = Modifier.align(Alignment.TopEnd),
                     ) {
-                        Icon(GalleryIcons.VisibilityOff, contentDescription = "Ocultar ${album.name}")
+                        Icon(GalleryIcons.VisibilityOff, contentDescription = stringResource(R.string.hide_album, album.name))
                     }
                     Column(
                         modifier = Modifier
@@ -169,7 +174,7 @@ internal fun AlbumsScreen(
                             .padding(10.dp),
                     ) {
                         Text(album.name, fontWeight = FontWeight.SemiBold, maxLines = 1)
-                        Text("${album.count} elementos", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.album_items, album.count), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -203,7 +208,7 @@ private fun SpecialAlbumCard(
                     .padding(10.dp),
             ) {
                 Text(title, fontWeight = FontWeight.SemiBold)
-                Text("${items.size} elementos", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.album_items, items.size), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }

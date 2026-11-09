@@ -18,7 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.galeria.R
 import app.galeria.data.GallerySettings
 
 @Composable
@@ -37,25 +39,25 @@ internal fun SettingsScreen(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onClose) {
-                Icon(GalleryIcons.Back, contentDescription = "Volver")
+                Icon(GalleryIcons.Back, contentDescription = stringResource(R.string.back))
             }
-            DestinationTitle("Ajustes")
+            DestinationTitle(stringResource(R.string.settings))
         }
         SettingToggle(
-            title = "Color dinámico",
-            subtitle = "Usa los colores del sistema manteniendo el tema oscuro.",
+            title = stringResource(R.string.dynamic_color),
+            subtitle = stringResource(R.string.dynamic_color_subtitle),
             checked = settings.dynamicColor,
             onCheckedChange = { onSettings(settings.copy(dynamicColor = it)) },
         )
         SettingToggle(
-            title = "Mostrar vídeos en Fotos",
-            subtitle = "Los vídeos seguirán disponibles en sus álbumes aunque se oculten aquí.",
+            title = stringResource(R.string.show_videos),
+            subtitle = stringResource(R.string.show_videos_subtitle),
             checked = settings.showVideos,
             onCheckedChange = { onSettings(settings.copy(showVideos = it)) },
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-        Text("Intervalo de presentación", style = MaterialTheme.typography.titleMedium)
-        Text("${settings.slideshowSeconds} segundos por imagen", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(stringResource(R.string.slideshow_interval), style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.slideshow_seconds, settings.slideshowSeconds), color = MaterialTheme.colorScheme.onSurfaceVariant)
         Slider(
             value = settings.slideshowSeconds.toFloat(),
             onValueChange = { onSettings(settings.copy(slideshowSeconds = it.toInt().coerceIn(2, 15))) },
@@ -63,18 +65,18 @@ internal fun SettingsScreen(
             steps = 12,
         )
         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
-        Text("Álbumes ocultos", style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.hidden_albums), style = MaterialTheme.typography.titleMedium)
         if (hiddenAlbums.isEmpty()) {
-            Text("No hay álbumes ocultos.", modifier = Modifier.padding(vertical = 12.dp))
+            Text(stringResource(R.string.no_hidden_albums), modifier = Modifier.padding(vertical = 12.dp))
         } else {
             hiddenAlbums.sorted().forEach { albumId ->
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text("Álbum $albumId", modifier = Modifier.weight(1f))
+                    Text(stringResource(R.string.hidden_album_item, albumId), modifier = Modifier.weight(1f))
                     IconButton(onClick = { onUnhideAlbum(albumId) }) {
-                        Icon(GalleryIcons.Visibility, contentDescription = "Mostrar álbum $albumId")
+                        Icon(GalleryIcons.Visibility, contentDescription = stringResource(R.string.unhide_album, albumId))
                     }
                 }
             }

@@ -36,8 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import app.galeria.R
 import app.galeria.data.FaceDetection
 import app.galeria.data.MediaItem
 import app.galeria.data.PeopleOrganizer
@@ -85,19 +87,19 @@ internal fun PeopleScreen(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onClose) { Icon(GalleryIcons.Back, "Volver") }
-            Text("Personas", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
-            Text("${detected.size} rostros", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            IconButton(onClick = onClose) { Icon(GalleryIcons.Back, stringResource(R.string.back)) }
+            Text(stringResource(R.string.people), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.faces_count, detected.size), color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Text(
-            "Detección local de rostros. Asigna un nombre para crear cada álbum.",
+            stringResource(R.string.people_help),
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         if (loading) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         if (!loading && detected.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("No se han detectado rostros en las fotografías", color = MaterialTheme.colorScheme.onBackground)
+                Text(stringResource(R.string.no_faces), color = MaterialTheme.colorScheme.onBackground)
             }
         } else {
             LazyColumn(
@@ -107,7 +109,7 @@ internal fun PeopleScreen(
             ) {
                 items(groups, key = { it.name }) { group ->
                     Column {
-                        Text("${group.name} · ${group.items.size}", color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.faces_group, group.name, group.items.size), color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.SemiBold)
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             items(group.items, key = { it.uri }) { item ->
                                 MediaImage(
@@ -121,7 +123,7 @@ internal fun PeopleScreen(
                 }
                 if (unnamed.isNotEmpty()) {
                     item {
-                        Text("Rostros sin nombrar · ${unnamed.size}", color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.SemiBold)
+                        Text(stringResource(R.string.unnamed_faces_count, unnamed.size), color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.SemiBold)
                     }
                     items(unnamed.chunked(4)) { rowItems ->
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(top = 8.dp)) {
@@ -135,7 +137,7 @@ internal fun PeopleScreen(
                                     TextButton(onClick = {
                                         personName = ""
                                         namingItem = item
-                                    }) { Text("Nombrar") }
+                                    }) { Text(stringResource(R.string.name_action)) }
                                 }
                             }
                         }
@@ -148,12 +150,12 @@ internal fun PeopleScreen(
     namingItem?.let { item ->
         AlertDialog(
             onDismissRequest = { namingItem = null },
-            title = { Text("Nombrar persona") },
+            title = { Text(stringResource(R.string.name_person)) },
             text = {
                 OutlinedTextField(
                     value = personName,
                     onValueChange = { personName = it },
-                    label = { Text("Nombre") },
+                    label = { Text(stringResource(R.string.name)) },
                     singleLine = true,
                 )
             },
@@ -165,9 +167,9 @@ internal fun PeopleScreen(
                         assignments = store.assignments()
                         namingItem = null
                     },
-                ) { Text("Guardar") }
+                ) { Text(stringResource(R.string.save)) }
             },
-            dismissButton = { TextButton(onClick = { namingItem = null }) { Text("Cancelar") } },
+            dismissButton = { TextButton(onClick = { namingItem = null }) { Text(stringResource(R.string.cancel)) } },
         )
     }
 }
