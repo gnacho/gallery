@@ -9,6 +9,8 @@ import android.net.Uri
 import android.print.PrintManager
 import android.widget.ImageView
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -135,7 +137,9 @@ internal fun MediaViewer(
             pager.animateScrollToPage((pager.currentPage + 1) % items.size)
         }
     }
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    val enterAlpha = remember { Animatable(0f) }
+    LaunchedEffect(Unit) { enterAlpha.animateTo(1f, tween(220)) }
+    Box(modifier = Modifier.fillMaxSize().graphicsLayer { alpha = enterAlpha.value }.background(Color.Black)) {
         if (comparing) {
             Row(modifier = Modifier.fillMaxSize()) {
                 Box(modifier = Modifier.weight(1f).fillMaxHeight()) { ViewerPage(item) }
