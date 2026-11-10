@@ -4,28 +4,51 @@ import kotlin.math.log2
 import kotlin.math.pow
 
 /**
- * ISO 21496-1 gain map metadata (the UltraHDR "hdrgm" fields).
+ * ISO 21496-1 (UltraHDR) gain map metadata, matching the "hdrgm" XMP fields.
+ *
+ * Reference: Android "Ultra HDR image format" specification.
  */
 data class GainMapMetadata(
-    /** Log2 gain ratio of the darkest gain map entry. */
+    /** `map_min_log2`: log2 of the minimum content boost (0.0 for no attenuation). */
     val gainMapMin: Float,
-    /** Log2 gain ratio of the brightest gain map entry. */
+    /** `map_max_log2`: log2 of the maximum content boost. */
     val gainMapMax: Float,
-    /** Gain map gamma (1.0 = linear). */
+    /** `map_gamma`: gamma applied to the stored gain map values. */
     val gamma: Float,
-    /** SDR offset applied before the ratio. */
-    val epsilonSdr: Float,
-    /** HDR offset applied before the ratio. */
-    val epsilonHdr: Float,
-    /** Display ratio of the SDR rendition (typically 1.0). */
+    /** `offset_sdr`: offset added to SDR luminance before the ratio. */
+    val offsetSdr: Float,
+    /** `offset_hdr`: offset added to HDR luminance before the ratio. */
+    val offsetHdr: Float,
+    /** `hdr_capacity_min`: log2 of the minimum display boost (0.0). */
     val hdrCapacityMin: Float,
-    /** Display ratio the HDR rendition can reach. */
+    /** `hdr_capacity_max`: log2 of the maximum display boost. */
     val hdrCapacityMax: Float,
-)
+) {
+    /**
+     * Serializes the "hdrgm" gain map metadata as an XMP packet fragment. A
+     * conformant encoder wraps this in the gain map image's XMP packet.
+     */
+    fun toXmp(): String = buildString {
+        append("""<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 5.5.0">""")
+        append("""<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">""")
+        append("""<rdf:Description rdf:about=""""")
+        append(""" xmlns:hdrgm="http://ns.adobe.com/hdr-gain-map/1.0/"""")
+        append(""" hdrgm:Version="1.0"""")
+        append(""" hdrgm:BaseRenditionIsHDR="False"""")
+        append(""" hdrgm:GainMapMin="$gainMapMin"""")
+        append(""" hdrgm:GainMapMax="$gainMapMax"""")
+        append(""" hdrgm:Gamma="$gamma"""")
+        append(""" hdrgm:OffsetSDR="$offsetSdr"""")
+        append(""" hdrgm:OffsetHDR="$offsetHdr"""")
+        append(""" hdrgm:HDRCapacityMin="$hdrCapacityMin"""")
+        append(""" hdrgm:HDRCapacityMax="$hdrCapacityMax"/>""")
+        append("""</rdf:RDF></x:xmpmeta>""")
+    }
+}
 
 /**
  * A single-channel gain map plus its ISO 21496-1 metadata. Each [gain] value is
- * the log2 HDR/SDR ratio for that cell.
+ * the log2 HDR/SDR pixel ratio for that cell, normalized on encode.
  */
 data class HdrGainMap(
     val width: Int,
@@ -34,15 +57,17 @@ data class HdrGainMap(
     val metadata: GainMapMetadata,
 ) {
     /**
-     * Encodes the log2 gain values to 8-bit, normalized to the metadata range
-     * [gainMapMin, gainMapMax]. The caller packs these into a single-channel
-     * image (for example ALPHA_8) for the gain map container.
+     * Encodes the log2 gain values to 8-bit per the spec:
+     * `recovery = clamp((log2(pixel_gain) - map_min_log2) / (map_max_log2 - map_min_log2)) ^ map_gamma`,
+     * then `floor(recovery * 255 + 0.5)`. With `map_gamma == 1` this is the
+     * linear normalization of [gain] into [0, 255].
      */
     fun encodeGainMap8Bit(): IntArray {
         val range = metadata.gainMapMax - metadata.gainMapMin
         return IntArray(gain.size) { i ->
             val t = if (range <= 0f) 0f else ((gain[i] - metadata.gainMapMin) / range).coerceIn(0f, 1f)
-            (t * 255f + 0.5f).toInt()
+            val recovery = t.pow(metadata.gamma)
+            (recovery * 255f + 0.5f).toInt().coerceIn(0, 255)
         }
     }
 }
@@ -50,15 +75,19 @@ data class HdrGainMap(
 /**
  * Clean-room SDR -> HDR upconversion. Computes a luminance-guided gain map and
  * its ISO 21496-1 metadata so a conformant decoder can reconstruct the HDR
- * rendition as `SDR * 2^gain`. No Honor code or binaries are involved.
+ * rendition. No Honor code or binaries are involved.
  */
 object GainMapGenerator {
 
     /** Downsample factor for the gain map relative to the base image. */
     private const val GAIN_MAP_DIVISOR = 4
     private const val GAMMA = 1f
-    private const val EPSILON = 0f
-    private const val HDR_CAPACITY_MIN = 1f
+
+    /** Spec-recommended offsets: 1/64. */
+    private const val OFFSET = 0.015625f
+
+    /** min_content_boost is 1.0 (no attenuation), so map_min_log2 == 0. */
+    private const val MAP_MIN_LOG2 = 0f
 
     /** Rec. 709 luminance weights, linear space. */
     private const val WR = 0.2126f
@@ -73,7 +102,7 @@ object GainMapGenerator {
      * Generates a gain map from an SDR image.
      *
      * @param pixels ARGB_8888 packed pixels, row-major (from [android.graphics.Bitmap.getPixels]).
-     * @param maxBoost maximum highlight boost; the HDR rendition reaches up to
+     * @param maxBoost maximum content boost; the HDR rendition reaches up to
      *   `1 + maxBoost` times the SDR luminance.
      */
     fun generate(pixels: IntArray, width: Int, height: Int, maxBoost: Float = 3f): HdrGainMap {
@@ -101,20 +130,23 @@ object GainMapGenerator {
                         count++
                     }
                 }
-                val luma = lumaSum / count
-                val highlight = smoothstep(HIGHLIGHT_EDGE_LO, HIGHLIGHT_EDGE_HI, luma)
-                gain[gy * gw + gx] = log2(1f + maxBoost * highlight)
+                val ysdr = lumaSum / count
+                val highlight = smoothstep(HIGHLIGHT_EDGE_LO, HIGHLIGHT_EDGE_HI, ysdr)
+                val yhdr = ysdr * (1f + maxBoost * highlight)
+                val pixelGain = (yhdr + OFFSET) / (ysdr + OFFSET)
+                gain[gy * gw + gx] = log2(pixelGain)
             }
         }
 
+        val mapMaxLog2 = log2(1f + maxBoost)
         val metadata = GainMapMetadata(
-            gainMapMin = 0f,
-            gainMapMax = log2(1f + maxBoost),
+            gainMapMin = MAP_MIN_LOG2,
+            gainMapMax = mapMaxLog2,
             gamma = GAMMA,
-            epsilonSdr = EPSILON,
-            epsilonHdr = EPSILON,
-            hdrCapacityMin = HDR_CAPACITY_MIN,
-            hdrCapacityMax = 1f + maxBoost,
+            offsetSdr = OFFSET,
+            offsetHdr = OFFSET,
+            hdrCapacityMin = MAP_MIN_LOG2.coerceAtLeast(0f),
+            hdrCapacityMax = mapMaxLog2,
         )
         return HdrGainMap(gw, gh, gain, metadata)
     }

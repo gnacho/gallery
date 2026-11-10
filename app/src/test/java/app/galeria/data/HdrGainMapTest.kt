@@ -19,13 +19,15 @@ class HdrGainMapTest {
     }
 
     @Test
-    fun whiteImageProducesMaximumGain() {
+    fun whiteImageProducesNearMaximumGain() {
         val maxBoost = 3f
         val map = GainMapGenerator.generate(filled(16, 16, argb(255, 255, 255)), 16, 16, maxBoost)
         val expectedMax = log2(1f + maxBoost)
-        map.gain.forEach { assertEquals(expectedMax, it, 1e-3f) }
         assertEquals(expectedMax, map.metadata.gainMapMax, 1e-3f)
-        assertEquals(1f + maxBoost, map.metadata.hdrCapacityMax, 1e-3f)
+        map.gain.forEach { g ->
+            assertTrue(g > 0f, "white gain $g should be > 0")
+            assertTrue(g < expectedMax, "white gain $g should be < map_max_log2 $expectedMax")
+        }
     }
 
     @Test
@@ -62,13 +64,17 @@ class HdrGainMapTest {
     }
 
     @Test
-    fun metadataFollowsIsoFields() {
-        val map = GainMapGenerator.generate(filled(16, 16, argb(200, 200, 200)), 16, 16)
-        assertEquals(1f, map.metadata.gamma)
-        assertEquals(0f, map.metadata.epsilonSdr)
-        assertEquals(0f, map.metadata.epsilonHdr)
-        assertEquals(1f, map.metadata.hdrCapacityMin)
-        assertTrue(map.metadata.gainMapMax >= map.metadata.gainMapMin)
+    fun metadataMatchesIso21496Fields() {
+        val maxBoost = 3f
+        val map = GainMapGenerator.generate(filled(16, 16, argb(200, 200, 200)), 16, 16, maxBoost)
+        val m = map.metadata
+        assertEquals(0f, m.gainMapMin, 1e-4f)
+        assertEquals(log2(1f + maxBoost), m.gainMapMax, 1e-3f)
+        assertEquals(1f, m.gamma)
+        assertEquals(0.015625f, m.offsetSdr)
+        assertEquals(0.015625f, m.offsetHdr)
+        assertEquals(0f, m.hdrCapacityMin, 1e-4f)
+        assertEquals(m.gainMapMax, m.hdrCapacityMax, 1e-3f)
     }
 
     @Test
@@ -90,18 +96,32 @@ class HdrGainMapTest {
     }
 
     @Test
-    fun encodeGainMap8BitNormalizesToMetadataRange() {
-        val maxBoost = 3f
-        val map = GainMapGenerator.generate(filled(16, 16, argb(255, 255, 255)), 16, 16, maxBoost)
-        val encoded = map.encodeGainMap8Bit()
-        assertEquals(map.gain.size, encoded.size)
-        encoded.forEach { assertEquals(255, it) }
-    }
-
-    @Test
     fun encodeGainMap8BitMapsBlackToZero() {
         val map = GainMapGenerator.generate(filled(16, 16, argb(0, 0, 0)), 16, 16)
         val encoded = map.encodeGainMap8Bit()
         encoded.forEach { assertEquals(0, it) }
+    }
+
+    @Test
+    fun encodeGainMap8BitMapsWhiteNearMax() {
+        val map = GainMapGenerator.generate(filled(16, 16, argb(255, 255, 255)), 16, 16)
+        val encoded = map.encodeGainMap8Bit()
+        encoded.forEach { assertTrue(it in 250..254, "white encoded $it should be near max (250..254)") }
+    }
+
+    @Test
+    fun xmpContainsAllHdrGmFields() {
+        val map = GainMapGenerator.generate(filled(16, 16, argb(200, 200, 200)), 16, 16)
+        val xmp = map.metadata.toXmp()
+        assertTrue(xmp.contains("""xmlns:hdrgm="http://ns.adobe.com/hdr-gain-map/1.0/""""))
+        assertTrue(xmp.contains("""hdrgm:Version="1.0""""))
+        assertTrue(xmp.contains("""hdrgm:BaseRenditionIsHDR="False""""))
+        assertTrue(xmp.contains("""hdrgm:GainMapMin=""""))
+        assertTrue(xmp.contains("""hdrgm:GainMapMax=""""))
+        assertTrue(xmp.contains("""hdrgm:Gamma=""""))
+        assertTrue(xmp.contains("""hdrgm:OffsetSDR=""""))
+        assertTrue(xmp.contains("""hdrgm:OffsetHDR=""""))
+        assertTrue(xmp.contains("""hdrgm:HDRCapacityMin=""""))
+        assertTrue(xmp.contains("""hdrgm:HDRCapacityMax=""""))
     }
 }
