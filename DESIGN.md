@@ -82,6 +82,8 @@ snackbars; destructive confirmations use dialogs.
 
 ## Motion
 
-No authored motion yet beyond system defaults. Planned: Material shared-axis
-and container-transform for screen/viewer transitions, honoring the system
-"Remove animations" setting.
+- Fade-through (`Crossfade`) on the top-level content states (permission,
+  loading, error, content).
+- System-provided component motion: snackbar, dropdown menu, bottom sheet.
+- Not yet: shared-axis / container-transform for the media viewer open/close.
+  Honors the system "Remove animations" setting through Compose defaults.
