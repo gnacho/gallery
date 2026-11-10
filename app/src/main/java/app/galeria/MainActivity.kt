@@ -31,6 +31,7 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     private val repository by lazy { MediaStoreRepository(applicationContext) }
+    private val settingsStore by lazy { GallerySettingsStore(applicationContext) }
     private var galleryState by mutableStateOf(GalleryNavigation.initial())
     private var favoriteItems by mutableStateOf(emptyList<app.galeria.data.MediaItem>())
     private var trashItems by mutableStateOf(emptyList<app.galeria.data.MediaItem>())
@@ -53,8 +54,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        sortOrder = settingsStore.load().sortOrder
         setContent {
-            val settingsStore = remember { GallerySettingsStore(this) }
             val settings = remember { mutableStateOf(settingsStore.load()) }
             GalleryTheme(dynamicColor = settings.value.dynamicColor) {
                 GalleryApp(
@@ -62,9 +63,11 @@ class MainActivity : ComponentActivity() {
                     requestedEditor = requestedEditor,
                     settings = settings.value,
                     onSettings = {
+                        val sortChanged = it.sortOrder != sortOrder
                         settings.value = it
                         sortOrder = it.sortOrder
                         settingsStore.save(it)
+                        if (sortChanged) loadMedia()
                     },
                     favoriteItems = favoriteItems,
                     trashItems = trashItems,

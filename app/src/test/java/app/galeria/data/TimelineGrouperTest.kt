@@ -8,22 +8,22 @@ import kotlin.test.assertEquals
 
 class TimelineGrouperTest {
     @Test
-    fun groupsByLocalDayAndSortsSectionsAndItemsDescending() {
+    fun groupsByLocalDayPreservingInputOrder() {
         val items = listOf(
-            media(1, "2024-05-01T23:30:00Z"),
-            media(2, "2024-05-02T00:30:00Z"),
-            media(3, "2024-05-01T10:00:00Z"),
+            media(1, "2024-05-01T23:30:00Z"), // 05-02 local
+            media(2, "2024-05-02T00:30:00Z"), // 05-02 local
+            media(3, "2024-05-01T10:00:00Z"), // 05-01 local
         )
 
         val sections = TimelineGrouper.group(items, ZoneId.of("Europe/Madrid"))
 
         assertEquals(listOf(LocalDate.of(2024, 5, 2), LocalDate.of(2024, 5, 1)), sections.map { it.date })
-        assertEquals(listOf(2L, 1L), sections[0].items.map { it.id })
+        assertEquals(listOf(1L, 2L), sections[0].items.map { it.id })
         assertEquals(listOf(3L), sections[1].items.map { it.id })
     }
 
     @Test
-    fun placesItemsWithoutCaptureDateInAFinalUndatedSection() {
+    fun groupsItemsWithoutCaptureDateInTheirOwnSection() {
         val items = listOf(
             media(4, null),
             media(2, "2024-05-02T00:30:00Z"),
@@ -32,8 +32,8 @@ class TimelineGrouperTest {
 
         val sections = TimelineGrouper.group(items, ZoneId.of("UTC"))
 
-        assertEquals(listOf(LocalDate.of(2024, 5, 2), null), sections.map { it.date })
-        assertEquals(listOf(4L, 3L), sections[1].items.map { it.id })
+        assertEquals(listOf(null, LocalDate.of(2024, 5, 2)), sections.map { it.date })
+        assertEquals(listOf(4L, 3L), sections[0].items.map { it.id })
     }
 
     private fun media(id: Long, timestamp: String?) = MediaItem(

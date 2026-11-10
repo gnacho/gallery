@@ -23,13 +23,7 @@ class MediaStoreRepository(private val contentResolver: ContentResolver) {
     private fun load(mode: MediaCollectionMode, sortOrder: SortOrder): List<MediaItem> = buildList {
         addAll(query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, MediaKind.Image, mode))
         addAll(query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MediaKind.Video, mode))
-    }.distinctBy { it.uri }.sortedWith(sortComparator(sortOrder))
-
-    private fun sortComparator(order: SortOrder): Comparator<MediaItem> = when (order) {
-        SortOrder.DATE_DESC -> compareByDescending<MediaItem> { it.dateTakenMillis ?: Long.MIN_VALUE }.thenByDescending { it.id }
-        SortOrder.DATE_ASC -> compareBy<MediaItem> { it.dateTakenMillis ?: Long.MAX_VALUE }.thenBy { it.id }
-        SortOrder.NAME_ASC -> compareBy<MediaItem> { it.displayName.lowercase() }.thenBy { it.id }
-    }
+    }.distinctBy { it.uri }.let { sortMediaItems(it, sortOrder) }
 
     private fun query(uri: Uri, kind: MediaKind, mode: MediaCollectionMode): List<MediaItem> {
         val cursor = if (mode == MediaCollectionMode.Normal) {
@@ -96,4 +90,10 @@ private fun Cursor.positiveLongOrNull(column: String): Long? = longOrNull(column
 private fun Cursor.stringOrNull(column: String): String? {
     val index = getColumnIndex(column)
     return if (index < 0 || isNull(index)) null else getString(index)
+}
+
+internal fun sortMediaItems(items: List<MediaItem>, order: SortOrder): List<MediaItem> = when (order) {
+    SortOrder.DATE_DESC -> items.sortedWith(compareByDescending<MediaItem> { it.dateTakenMillis ?: Long.MIN_VALUE }.thenByDescending { it.id })
+    SortOrder.DATE_ASC -> items.sortedWith(compareBy<MediaItem> { it.dateTakenMillis ?: Long.MAX_VALUE }.thenBy { it.id })
+    SortOrder.NAME_ASC -> items.sortedWith(compareBy<MediaItem> { it.displayName.lowercase() }.thenBy { it.id })
 }
