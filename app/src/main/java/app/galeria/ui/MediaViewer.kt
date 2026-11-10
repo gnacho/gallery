@@ -13,7 +13,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,7 +53,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -353,23 +352,25 @@ internal fun MediaViewer(
 @Composable
 private fun ViewerPage(item: MediaItem) {
     var transform by remember(item.uri) { mutableStateOf(ViewerTransform()) }
+    // NOTE: pinch-to-zoom is intentionally not wired here yet. In Compose 1.12 the
+    // transformable/gesture modifiers consume the single-finger drag and block the
+    // HorizontalPager swipe, so the pager owns all drag gestures for now. The
+    // graphicsLayer transform below is ready for a future zoom gesture.
     Box(
-        modifier = Modifier.fillMaxSize().pointerInput(item.uri) {
-            detectTransformGestures { _, pan, zoom, _ ->
-                transform = transform.zoomBy(zoom).panBy(pan.x, pan.y)
-            }
-        }.graphicsLayer {
-            scaleX = transform.scale
-            scaleY = transform.scale
-            translationX = transform.offsetX
-            translationY = transform.offsetY
-        },
+        modifier = Modifier
+            .fillMaxSize()
+            .graphicsLayer {
+                scaleX = transform.scale
+                scaleY = transform.scale
+                translationX = transform.offsetX
+                translationY = transform.offsetY
+            },
         contentAlignment = Alignment.Center,
     ) {
         when {
             item.mimeType.startsWith("video/") -> VideoPlayer(item)
             item.mimeType == "image/gif" || item.mimeType == "image/webp" -> AnimatedImage(item)
-            else -> MediaImage(item, modifier = Modifier.fillMaxSize())
+            else -> MediaImage(item, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit, targetSize = 4096)
         }
     }
 }
