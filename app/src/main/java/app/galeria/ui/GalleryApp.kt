@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.os.CancellationSignal
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.animation.Crossfade
@@ -68,6 +69,7 @@ import app.galeria.data.PrivateVault
 import app.galeria.data.VaultEntry
 import app.galeria.data.SearchHistory
 import app.galeria.data.ShareIntents
+import app.galeria.data.UltraHdrExport
 import app.galeria.data.VaultAuthenticator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -198,6 +200,29 @@ fun GalleryApp(
                     onReload()
                 }
                 .onFailure { message = context.getString(R.string.duplicate_failed) }
+        }
+    }
+    val exportHdr: (MediaItem) -> Unit = { item ->
+        if (item.mimeType.startsWith("image/")) {
+            scope.launch {
+                runCatching {
+                    withContext(Dispatchers.IO) {
+                        val source = android.graphics.ImageDecoder.createSource(resolver, Uri.parse(item.uri))
+                        val bitmap = android.graphics.ImageDecoder.decodeBitmap(source)
+                        val bytes = UltraHdrExport.encode(bitmap)
+                        MediaStoreOperations.importBytes(
+                            resolver,
+                            item.copy(displayName = hdrName(item.displayName), mimeType = "image/jpeg"),
+                            bytes,
+                        )
+                    }
+                }.onSuccess {
+                    message = context.getString(R.string.hdr_saved)
+                    onReload()
+                }.onFailure {
+                    message = context.getString(R.string.hdr_export_failed)
+                }
+            }
         }
     }
     val rename: (MediaItem, String) -> Unit = { item, newName ->
@@ -354,6 +379,7 @@ fun GalleryApp(
                 onEdit = { editingItem = it },
                 onEditVideo = { videoEditingItem = it },
                 onDuplicate = duplicate,
+                onExportHdr = exportHdr,
                 onRename = rename,
                 onMessage = { message = it },
                 slideshowSeconds = settings.slideshowSeconds,
@@ -760,4 +786,9 @@ private fun GalleryDestination.icon(): ImageVector = when (this) {
     GalleryDestination.Memories -> GalleryIcons.Memories
     GalleryDestination.Create -> GalleryIcons.Create
     GalleryDestination.Albums -> GalleryIcons.Albums
+}
+
+private fun hdrName(name: String): String {
+    val dot = name.lastIndexOf('.')
+    return if (dot > 0) "${name.substring(0, dot)}-hdr${name.substring(dot)}" else "$name-hdr.jpg"
 }

@@ -263,6 +263,11 @@
     <string name="note_deleted">Nota eliminada</string>
     <string name="note_saved">Nota guardada</string>
 
+    <!-- Exportación UltraHDR -->
+    <string name="export_hdr">Guardar como UltraHDR</string>
+    <string name="hdr_saved">Guardado como UltraHDR en Pictures/Galeria</string>
+    <string name="hdr_export_failed">No se pudo guardar como UltraHDR</string>
+
     <!-- MainActivity -->
     <string name="import_shared_failed">No se pudieron importar los elementos compartidos</string>
     <string name="open_shared_failed">No se pudieron abrir los elementos compartidos</string>

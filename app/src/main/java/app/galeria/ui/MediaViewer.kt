@@ -101,6 +101,7 @@ internal fun MediaViewer(
     onEdit: (MediaItem) -> Unit,
     onEditVideo: (MediaItem) -> Unit,
     onDuplicate: (MediaItem) -> Unit,
+    onExportHdr: (MediaItem) -> Unit,
     onRename: (MediaItem, String) -> Unit,
     onPrivate: (List<MediaItem>) -> Unit,
     onMessage: (String) -> Unit,
@@ -228,6 +229,14 @@ internal fun MediaViewer(
                                         printBitmap(item.displayName, Uri.parse(item.uri))
                                     }
                                 }.onFailure { onMessage(context.getString(R.string.print_failed)) }
+                            },
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.export_hdr)) },
+                            leadingIcon = { Icon(GalleryIcons.Slideshow, null) },
+                            onClick = {
+                                moreVisible = false
+                                onExportHdr(item)
                             },
                         )
                     }
