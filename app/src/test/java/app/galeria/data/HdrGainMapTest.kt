@@ -124,4 +124,17 @@ class HdrGainMapTest {
         assertTrue(xmp.contains("""hdrgm:HDRCapacityMin=""""))
         assertTrue(xmp.contains("""hdrgm:HDRCapacityMax=""""))
     }
+
+    @Test
+    fun containerXmpListsPrimaryAndGainMapItems() {
+        val container = GainMapContainer(gainMapJpegLength = 66_171)
+        val xmp = container.toXmp()
+        assertTrue(xmp.contains("""xmlns:Container="http://ns.google.com/photos/1.0/container/""""))
+        assertTrue(xmp.contains("""xmlns:Item="http://ns.google.com/photos/1.0/container/item/""""))
+        assertTrue(xmp.contains("""hdrgm:Version="1.0""""))
+        assertTrue(xmp.contains("""Item:Semantic="Primary""""))
+        assertTrue(xmp.contains("""Item:Mime="image/jpeg""""))
+        assertTrue(xmp.contains("""Item:Semantic="GainMap""""))
+        assertTrue(xmp.contains("""Item:Length="66171""""))
+    }
 }

@@ -159,3 +159,28 @@ object GainMapGenerator {
         return t * t * (3f - 2f * t)
     }
 }
+
+/**
+ * GContainer XMP directory for the primary image: lists the primary image and
+ * the appended gain map image so a conformant decoder can locate them.
+ */
+class GainMapContainer(private val gainMapJpegLength: Int) {
+
+    init {
+        require(gainMapJpegLength > 0) { "gainMapJpegLength must be positive" }
+    }
+
+    fun toXmp(): String = buildString {
+        append("""<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="Adobe XMP Core 5.1.2">""")
+        append("""<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">""")
+        append("""<rdf:Description""")
+        append(""" xmlns:Container="http://ns.google.com/photos/1.0/container/"""")
+        append(""" xmlns:Item="http://ns.google.com/photos/1.0/container/item/"""")
+        append(""" xmlns:hdrgm="http://ns.adobe.com/hdr-gain-map/1.0/" hdrgm:Version="1.0">""")
+        append("""<Container:Directory><rdf:Seq>""")
+        append("""<rdf:li rdf:parseType="Resource"><Container:Item Item:Semantic="Primary" Item:Mime="image/jpeg"/></rdf:li>""")
+        append("""<rdf:li rdf:parseType="Resource"><Container:Item Item:Semantic="GainMap" Item:Mime="image/jpeg" Item:Length="$gainMapJpegLength"/></rdf:li>""")
+        append("""</rdf:Seq></Container:Directory>""")
+        append("""</rdf:Description></rdf:RDF></x:xmpmeta>""")
+    }
+}
