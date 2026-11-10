@@ -1,5 +1,7 @@
 package app.galeria.ui
 
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.galeria.R
 import app.galeria.data.GallerySettings
+import app.galeria.data.SortOrder
 
 @Composable
 internal fun SettingsScreen(
@@ -55,6 +59,20 @@ internal fun SettingsScreen(
             checked = settings.showVideos,
             onCheckedChange = { onSettings(settings.copy(showVideos = it)) },
         )
+        HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+        Text(stringResource(R.string.sort_order), style = MaterialTheme.typography.titleMedium)
+        Row(
+            modifier = Modifier.padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            SortOrder.entries.forEach { order ->
+                FilterChip(
+                    selected = settings.sortOrder == order,
+                    onClick = { onSettings(settings.copy(sortOrder = order)) },
+                    label = { Text(stringResource(order.labelRes())) },
+                )
+            }
+        }
         HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
         Text(stringResource(R.string.slideshow_interval), style = MaterialTheme.typography.titleMedium)
         Text(stringResource(R.string.slideshow_seconds, settings.slideshowSeconds), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -102,4 +120,11 @@ private fun SettingToggle(
         }
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
+}
+
+@StringRes
+private fun SortOrder.labelRes(): Int = when (this) {
+    SortOrder.DATE_DESC -> R.string.sort_date_desc
+    SortOrder.DATE_ASC -> R.string.sort_date_asc
+    SortOrder.NAME_ASC -> R.string.sort_name_asc
 }

@@ -20,6 +20,7 @@ import app.galeria.data.GallerySettingsStore
 import app.galeria.data.MediaItem
 import app.galeria.data.MediaStoreOperations
 import app.galeria.data.MediaStoreRepository
+import app.galeria.data.SortOrder
 import app.galeria.ui.GalleryApp
 import app.galeria.ui.GalleryNavigation
 import app.galeria.ui.GalleryTheme
@@ -36,6 +37,7 @@ class MainActivity : ComponentActivity() {
     private var isLoading by mutableStateOf(true)
     private var loadError by mutableStateOf<String?>(null)
     private var requestedEditor by mutableStateOf<MediaItem?>(null)
+    private var sortOrder = SortOrder.DATE_DESC
 
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
@@ -61,6 +63,7 @@ class MainActivity : ComponentActivity() {
                     settings = settings.value,
                     onSettings = {
                         settings.value = it
+                        sortOrder = it.sortOrder
                         settingsStore.save(it)
                     },
                     favoriteItems = favoriteItems,
@@ -155,7 +158,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             try {
                 val loaded = withContext(Dispatchers.IO) {
-                    Triple(repository.load(), repository.loadFavorites(), repository.loadTrash())
+                    Triple(repository.load(sortOrder), repository.loadFavorites(), repository.loadTrash())
                 }
                 val items = loaded.first
                 favoriteItems = loaded.second

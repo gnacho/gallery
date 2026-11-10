@@ -84,6 +84,10 @@
     <string name="no_hidden_albums">No hidden albums.</string>
     <string name="hidden_album_item">Album %1$d</string>
     <string name="unhide_album">Show album %1$d</string>
+    <string name="sort_order">Sort order</string>
+    <string name="sort_date_desc">Newest first</string>
+    <string name="sort_date_asc">Oldest first</string>
+    <string name="sort_name_asc">Name (A-Z)</string>
 
     <!-- Year in review -->
     <string name="annual_summary">Year in review</string>

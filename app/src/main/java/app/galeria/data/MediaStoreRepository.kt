@@ -12,18 +12,24 @@ private enum class MediaCollectionMode { Normal, Favorites, Trash }
 class MediaStoreRepository(private val contentResolver: ContentResolver) {
     constructor(context: Context) : this(context.applicationContext.contentResolver)
 
-    fun load(): List<MediaItem> = load(MediaCollectionMode.Normal)
+    fun load(): List<MediaItem> = load(MediaCollectionMode.Normal, SortOrder.DATE_DESC)
 
-    fun loadFavorites(): List<MediaItem> = load(MediaCollectionMode.Favorites)
+    fun load(sortOrder: SortOrder): List<MediaItem> = load(MediaCollectionMode.Normal, sortOrder)
 
-    fun loadTrash(): List<MediaItem> = load(MediaCollectionMode.Trash)
+    fun loadFavorites(): List<MediaItem> = load(MediaCollectionMode.Favorites, SortOrder.DATE_DESC)
 
-    private fun load(mode: MediaCollectionMode): List<MediaItem> = buildList {
+    fun loadTrash(): List<MediaItem> = load(MediaCollectionMode.Trash, SortOrder.DATE_DESC)
+
+    private fun load(mode: MediaCollectionMode, sortOrder: SortOrder): List<MediaItem> = buildList {
         addAll(query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, MediaKind.Image, mode))
         addAll(query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, MediaKind.Video, mode))
-    }.distinctBy { it.uri }.sortedWith(
-        compareByDescending<MediaItem> { it.dateTakenMillis ?: Long.MIN_VALUE }.thenByDescending { it.id },
-    )
+    }.distinctBy { it.uri }.sortedWith(sortComparator(sortOrder))
+
+    private fun sortComparator(order: SortOrder): Comparator<MediaItem> = when (order) {
+        SortOrder.DATE_DESC -> compareByDescending<MediaItem> { it.dateTakenMillis ?: Long.MIN_VALUE }.thenByDescending { it.id }
+        SortOrder.DATE_ASC -> compareBy<MediaItem> { it.dateTakenMillis ?: Long.MAX_VALUE }.thenBy { it.id }
+        SortOrder.NAME_ASC -> compareBy<MediaItem> { it.displayName.lowercase() }.thenBy { it.id }
+    }
 
     private fun query(uri: Uri, kind: MediaKind, mode: MediaCollectionMode): List<MediaItem> {
         val cursor = if (mode == MediaCollectionMode.Normal) {
