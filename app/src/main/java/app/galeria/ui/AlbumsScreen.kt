@@ -35,7 +35,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import app.galeria.R
 import app.galeria.data.AlbumGrouper
 import app.galeria.data.MediaItem
@@ -174,7 +173,7 @@ internal fun AlbumsScreen(
                             .padding(10.dp),
                     ) {
                         Text(album.name, fontWeight = FontWeight.SemiBold, maxLines = 1)
-                        Text(stringResource(R.string.album_items, album.count), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.album_items, album.count), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -194,12 +193,12 @@ private fun SpecialAlbumCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-                .background(Color(0xFF181B20), RoundedCornerShape(6.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(6.dp))
                 .clickable(onClick = onClick),
             contentAlignment = Alignment.Center,
         ) {
             items.firstOrNull()?.let { MediaImage(it, Modifier.fillMaxSize()) }
-            if (items.isEmpty()) Icon(icon, null, modifier = Modifier.size(48.dp), tint = Color(0xFF8D9199))
+            if (items.isEmpty()) Icon(icon, null, modifier = Modifier.size(48.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Column(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
@@ -208,7 +207,7 @@ private fun SpecialAlbumCard(
                     .padding(10.dp),
             ) {
                 Text(title, fontWeight = FontWeight.SemiBold)
-                Text(stringResource(R.string.album_items, items.size), fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.album_items, items.size), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }

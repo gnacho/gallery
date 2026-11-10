@@ -171,7 +171,7 @@ private fun VaultImage(entry: VaultEntry, vault: PrivateVault, modifier: Modifie
             modifier = modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
         )
-    } ?: Box(modifier = modifier.fillMaxSize().background(Color(0xFF17181B)))
+    } ?: Box(modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceVariant))
 }
 
 @Composable

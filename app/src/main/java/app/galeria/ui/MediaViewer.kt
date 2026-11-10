@@ -56,7 +56,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -83,7 +82,7 @@ private fun ViewerAction(icon: ImageVector, label: String, onClick: () -> Unit) 
     TextButton(onClick = onClick, colors = ButtonDefaults.textButtonColors(contentColor = Color.White)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(icon, label)
-            Text(label, fontSize = 11.sp, maxLines = 1)
+            Text(label, style = MaterialTheme.typography.labelSmall, maxLines = 1)
         }
     }
 }
@@ -155,8 +154,8 @@ internal fun MediaViewer(
         ) {
             IconButton(onClick = onClose) { Icon(GalleryIcons.Back, stringResource(R.string.back)) }
             Column(modifier = Modifier.weight(1f)) {
-                Text(item.displayName, color = Color.White, maxLines = 1, fontSize = 15.sp)
-                date?.let { Text(it, fontSize = 12.sp, color = Color(0xFFC8CAD0)) }
+                Text(item.displayName, color = Color.White, maxLines = 1, style = MaterialTheme.typography.titleMedium)
+                date?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
             }
             if (comparing) {
                 IconButton(onClick = { comparing = false }) { Icon(GalleryIcons.Compare, stringResource(R.string.end_compare)) }
@@ -434,7 +433,7 @@ private fun MediaDetailsPanel(item: MediaItem) {
     }
     LazyColumn(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
         item {
-            Text(stringResource(R.string.details), fontSize = 26.sp, modifier = Modifier.padding(bottom = 12.dp))
+            Text(stringResource(R.string.details), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(bottom = 12.dp))
             DetailRow(stringResource(R.string.name), item.displayName)
             DetailRow(stringResource(R.string.type), item.mimeType)
             DetailRow(stringResource(R.string.size), formatBytes(item.sizeBytes))
@@ -473,7 +472,7 @@ private fun DetailRow(label: String, value: String) {
 private fun Histogram(values: IntArray) {
     val maximum = values.max().coerceAtLeast(1)
     Column(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
-        Text(stringResource(R.string.histogram), fontSize = 16.sp)
+        Text(stringResource(R.string.histogram), style = MaterialTheme.typography.titleMedium)
         Canvas(modifier = Modifier.fillMaxWidth().height(110.dp).padding(top = 8.dp)) {
             val barWidth = size.width / values.size
             values.forEachIndexed { index, value ->

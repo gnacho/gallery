@@ -51,7 +51,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import app.galeria.R
 import app.galeria.data.BorderSpec
 import app.galeria.data.CropSpec
@@ -106,7 +105,7 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = onClose, enabled = !saving) { Icon(GalleryIcons.Close, stringResource(R.string.close_editor)) }
-            Text(stringResource(R.string.edit), fontSize = 22.sp, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.edit), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
             TextButton(
                 onClick = {
                     state = state.reset()
@@ -230,30 +229,30 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
                 )
             }
         }
-        error?.let { Text(it, color = Color(0xFFFF8A80), modifier = Modifier.padding(horizontal = 20.dp)) }
+        error?.let { Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 20.dp)) }
         Column(
             modifier = Modifier.fillMaxWidth().heightIn(max = 380.dp)
                 .verticalScroll(rememberScrollState()).padding(horizontal = 20.dp, vertical = 8.dp),
         ) {
-            Text(stringResource(R.string.brightness), fontSize = 13.sp)
+            Text(stringResource(R.string.brightness), style = MaterialTheme.typography.labelLarge)
             Slider(
                 value = state.brightness,
                 onValueChange = { state = state.copy(brightness = it) },
                 valueRange = -100f..100f,
             )
-            Text(stringResource(R.string.contrast), fontSize = 13.sp)
+            Text(stringResource(R.string.contrast), style = MaterialTheme.typography.labelLarge)
             Slider(
                 value = state.contrast,
                 onValueChange = { state = state.copy(contrast = it) },
                 valueRange = 0.5f..2f,
             )
-            Text(stringResource(R.string.saturation), fontSize = 13.sp)
+            Text(stringResource(R.string.saturation), style = MaterialTheme.typography.labelLarge)
             Slider(
                 value = state.saturation,
                 onValueChange = { state = state.copy(saturation = it) },
                 valueRange = 0f..2f,
             )
-            Text(stringResource(R.string.warmth), fontSize = 13.sp)
+            Text(stringResource(R.string.warmth), style = MaterialTheme.typography.labelLarge)
             Slider(
                 value = state.warmth,
                 onValueChange = { state = state.copy(warmth = it) },
@@ -277,7 +276,7 @@ internal fun EditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: () -> U
                     )
                 }
             }
-            Text(stringResource(R.string.filter_intensity), fontSize = 13.sp)
+            Text(stringResource(R.string.filter_intensity), style = MaterialTheme.typography.labelLarge)
             Slider(
                 value = state.filterIntensity,
                 onValueChange = { state = state.copy(filterIntensity = it) },

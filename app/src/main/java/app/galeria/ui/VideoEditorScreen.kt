@@ -27,11 +27,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import app.galeria.R
 import app.galeria.data.MediaItem
@@ -63,7 +61,7 @@ internal fun VideoEditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: ()
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = onClose, enabled = !saving) { Icon(GalleryIcons.Close, stringResource(R.string.close_video_editor)) }
-            Text(stringResource(R.string.trim_video), fontSize = 22.sp, modifier = Modifier.weight(1f))
+            Text(stringResource(R.string.trim_video), style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
             if (saving) CircularProgressIndicator(modifier = Modifier.padding(8.dp))
         }
         AndroidView(
@@ -81,7 +79,7 @@ internal fun VideoEditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: ()
         )
         Column(modifier = Modifier.fillMaxWidth().padding(20.dp)) {
             if (duration <= 0L) {
-                Text(stringResource(R.string.video_duration_unknown), color = Color(0xFFFF8A80))
+                Text(stringResource(R.string.video_duration_unknown), color = MaterialTheme.colorScheme.error)
             } else {
                 Text(stringResource(R.string.video_trim_range, formatTime(start), formatTime(end), formatTime(end - start)))
                 RangeSlider(
@@ -138,7 +136,7 @@ internal fun VideoEditorScreen(item: MediaItem, onClose: () -> Unit, onSaved: ()
                     },
                 ) { Text(stringResource(if (saving) R.string.exporting else R.string.save_trim_copy)) }
             }
-            error?.let { Text(it, color = Color(0xFFFF8A80), modifier = Modifier.padding(top = 8.dp)) }
+            error?.let { Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp)) }
         }
     }
 }

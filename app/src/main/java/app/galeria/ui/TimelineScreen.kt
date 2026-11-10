@@ -48,7 +48,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import app.galeria.R
 import app.galeria.data.MediaItem
 import app.galeria.data.MediaSearch
@@ -226,7 +225,7 @@ internal fun TimelineScreen(
                         Text(
                             section.date?.format(formatter) ?: stringResource(R.string.undated),
                             color = MaterialTheme.colorScheme.onBackground,
-                            fontSize = 18.sp,
+                            style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.padding(top = 22.dp, bottom = 10.dp),
                         )
@@ -296,7 +295,7 @@ internal fun MediaGridCell(
             ) {
                 Icon(GalleryIcons.Video, stringResource(R.string.video_duration), tint = Color.White)
                 item.durationMillis?.let {
-                    Text(formatDuration(it), fontSize = 11.sp, color = Color.White)
+                    Text(formatDuration(it), style = MaterialTheme.typography.labelSmall, color = Color.White)
                 }
             }
         }

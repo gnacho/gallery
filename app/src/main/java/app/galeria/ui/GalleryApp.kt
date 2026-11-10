@@ -52,7 +52,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import app.galeria.R
 import app.galeria.data.AlbumTransferPlan
 import app.galeria.data.GalleryContentFilter
@@ -670,7 +669,7 @@ private fun RailItem(
             Text(
                 stringResource(destination.labelRes),
                 color = color,
-                fontSize = 14.sp,
+                style = MaterialTheme.typography.labelLarge,
                 fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -684,7 +683,7 @@ internal fun DestinationTitle(title: String) {
     Text(
         text = title,
         color = MaterialTheme.colorScheme.onBackground,
-        fontSize = 34.sp,
+        style = MaterialTheme.typography.headlineLarge,
         fontWeight = FontWeight.Medium,
         modifier = Modifier.padding(top = 18.dp, bottom = 12.dp),
     )
@@ -731,7 +730,7 @@ internal fun MessageDestination(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(title, fontSize = 28.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
+        Text(title, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
         Text(
             message,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

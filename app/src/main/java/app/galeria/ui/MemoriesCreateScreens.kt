@@ -42,7 +42,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import app.galeria.R
 import app.galeria.data.CollageRenderer
 import app.galeria.data.MediaItem
@@ -99,8 +98,8 @@ internal fun MemoriesScreen(items: List<MediaItem>, onOpen: (MediaItem) -> Unit,
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(stringResource(R.string.on_this_day), color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 14.sp)
-                                Text(memory.year.toString(), fontSize = 28.sp, fontWeight = FontWeight.SemiBold)
+                                Text(stringResource(R.string.on_this_day), color = MaterialTheme.colorScheme.onPrimaryContainer, style = MaterialTheme.typography.bodyMedium)
+                                Text(memory.year.toString(), style = MaterialTheme.typography.headlineMedium)
                             }
                             IconButton(onClick = { playing = memory }) {
                                 Icon(GalleryIcons.Slideshow, stringResource(R.string.play_memory))
@@ -139,8 +138,8 @@ internal fun Slideshow(items: List<MediaItem>, title: String, slideshowSeconds: 
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = onClose) { Icon(GalleryIcons.Close, stringResource(R.string.close_slideshow)) }
-            Text(title, fontSize = 20.sp, modifier = Modifier.weight(1f))
-            Text("${pager.currentPage + 1}/${items.size}", color = Color(0xFFC8CAD0))
+            Text(title, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
+            Text("${pager.currentPage + 1}/${items.size}", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -262,7 +261,7 @@ internal fun CreateScreen(
             Text(
                 stringResource(R.string.ai_notice),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 13.sp,
+                style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(vertical = 12.dp),
             )
         }
@@ -283,7 +282,7 @@ private fun CreationCard(
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
-            Text(title, fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+            Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
             Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp, bottom = 16.dp))
             Button(onClick = onClick, enabled = enabled) { Text(action) }
         }
