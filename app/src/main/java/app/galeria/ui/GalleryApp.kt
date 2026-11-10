@@ -7,6 +7,7 @@ import android.os.CancellationSignal
 import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.animation.Crossfade
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -372,11 +373,18 @@ fun GalleryApp(
                     modifier = Modifier.width(if (expanded) 160.dp else 80.dp),
                 )
                 Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                    when {
-                        state.permissionDenied -> PermissionState(onRetry)
-                        isLoading -> LoadingState()
-                        loadError != null -> ErrorState(loadError, onRetry)
-                        else -> GalleryContent(
+                    val contentState = when {
+                        state.permissionDenied -> 0
+                        isLoading -> 1
+                        loadError != null -> 2
+                        else -> 3
+                    }
+                    Crossfade(targetState = contentState, label = "content") { cs ->
+                        when (cs) {
+                            0 -> PermissionState(onRetry)
+                            1 -> LoadingState()
+                            2 -> ErrorState(loadError ?: "", onRetry)
+                            else -> GalleryContent(
                             state = state,
                             items = items,
                             notes = notes,
@@ -428,6 +436,7 @@ fun GalleryApp(
                             onMap = { mapVisible = true },
                             onPeople = { peopleVisible = true },
                         )
+                        }
                     }
                 }
             }
