@@ -370,7 +370,7 @@ private fun ViewerPage(item: MediaItem) {
         when {
             item.mimeType.startsWith("video/") -> VideoPlayer(item)
             item.mimeType == "image/gif" || item.mimeType == "image/webp" -> AnimatedImage(item)
-            else -> MediaImage(item, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit, targetSize = 4096)
+            else -> FullResImage(item, modifier = Modifier.fillMaxSize())
         }
     }
 }

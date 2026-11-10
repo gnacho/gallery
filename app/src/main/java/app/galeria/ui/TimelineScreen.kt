@@ -81,12 +81,14 @@ internal fun TimelineScreen(
     onPrivate: (List<MediaItem>) -> Unit,
     onMap: () -> Unit,
     onPeople: () -> Unit,
+    onSettings: () -> Unit,
     notes: Map<String, String> = emptyMap(),
 ) {
     var query by rememberSaveable { mutableStateOf("") }
     var searchVisible by rememberSaveable { mutableStateOf(false) }
     var columns by rememberSaveable { mutableIntStateOf(if (expanded) 5 else 4) }
     var moreVisible by remember { mutableStateOf(false) }
+    var settingsMenuVisible by remember { mutableStateOf(false) }
     val zone = remember { ZoneId.systemDefault() }
     val filtered = remember(items, query, notes) { MediaSearch.filter(items, query, zone, notes) }
     val sections = remember(filtered) { TimelineGrouper.group(filtered, zone) }
@@ -123,6 +125,21 @@ internal fun TimelineScreen(
                         }
                         IconButton(onClick = onMap) { Icon(GalleryIcons.Map, stringResource(R.string.map)) }
                         IconButton(onClick = onPeople) { Icon(GalleryIcons.Person, stringResource(R.string.people)) }
+                        Box {
+                            IconButton(onClick = { settingsMenuVisible = true }) {
+                                Icon(GalleryIcons.More, stringResource(R.string.more))
+                            }
+                            DropdownMenu(expanded = settingsMenuVisible, onDismissRequest = { settingsMenuVisible = false }) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.settings)) },
+                                    leadingIcon = { Icon(GalleryIcons.Settings, null) },
+                                    onClick = {
+                                        settingsMenuVisible = false
+                                        onSettings()
+                                    },
+                                )
+                            }
+                        }
                     }
                 }
             }

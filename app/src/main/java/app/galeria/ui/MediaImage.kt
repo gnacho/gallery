@@ -1,6 +1,7 @@
 package app.galeria.ui
 
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.util.Size
 import androidx.compose.foundation.Image
@@ -53,6 +54,53 @@ fun MediaImage(
             Icon(
                 imageVector = if (item.mimeType.startsWith("video/")) GalleryIcons.Video else GalleryIcons.Photo,
                 contentDescription = stringResource(R.string.photo_thumbnail, item.displayName),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+/**
+ * Decodes a full-resolution image (via [ImageDecoder], subsampled only above
+ * 4096px) for the viewer. Unlike [MediaImage], this does not go through the
+ * MediaStore thumbnail cache, so photos render at their real resolution.
+ */
+@Composable
+fun FullResImage(
+    item: MediaItem,
+    modifier: Modifier = Modifier,
+) {
+    val resolver = LocalContext.current.contentResolver
+    val bitmap by produceState<Bitmap?>(initialValue = null, item.uri) {
+        value = withContext(Dispatchers.IO) {
+            runCatching {
+                val source = ImageDecoder.createSource(resolver, Uri.parse(item.uri))
+                ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
+                    decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+                    val maxDimension = maxOf(info.size.width, info.size.height)
+                    var sample = 1
+                    while (maxDimension / sample > 4096) sample *= 2
+                    decoder.setTargetSampleSize(sample)
+                }
+            }.getOrNull()
+        }
+    }
+    val current = bitmap
+    if (current != null) {
+        Image(
+            bitmap = current.asImageBitmap(),
+            contentDescription = item.displayName,
+            modifier = modifier,
+            contentScale = ContentScale.Fit,
+        )
+    } else {
+        Box(
+            modifier = modifier.background(MaterialTheme.colorScheme.surfaceVariant),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = GalleryIcons.Photo,
+                contentDescription = item.displayName,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }

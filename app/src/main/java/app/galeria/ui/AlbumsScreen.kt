@@ -68,6 +68,7 @@ internal fun AlbumsScreen(
     onOpenPrivate: () -> Unit,
     onMap: () -> Unit,
     onPeople: () -> Unit,
+    onSettings: () -> Unit,
 ) {
     val unnamedAlbumName = stringResource(R.string.unnamed_album)
     val favoritesName = stringResource(R.string.album_favorites)
@@ -105,6 +106,7 @@ internal fun AlbumsScreen(
                     onPrivate = onPrivate,
                     onMap = onMap,
                     onPeople = onPeople,
+                    onSettings = onSettings,
                 )
             }
         }

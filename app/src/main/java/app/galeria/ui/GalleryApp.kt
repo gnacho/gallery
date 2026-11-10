@@ -395,7 +395,6 @@ fun GalleryApp(
                     selected = state.destination,
                     expanded = expanded,
                     onDestination = onDestination,
-                    onSettings = { settingsVisible = true },
                     modifier = Modifier.width(if (expanded) 160.dp else 80.dp),
                 )
                 Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
@@ -461,6 +460,7 @@ fun GalleryApp(
                             onOpenPrivate = openPrivate,
                             onMap = { mapVisible = true },
                             onPeople = { peopleVisible = true },
+                            onSettings = { settingsVisible = true },
                         )
                         }
                     }
@@ -587,6 +587,7 @@ private fun GalleryContent(
     onOpenPrivate: () -> Unit,
     onMap: () -> Unit,
     onPeople: () -> Unit,
+    onSettings: () -> Unit,
 ) {
     when (state.destination) {
         GalleryDestination.Gallery, GalleryDestination.Photos -> TimelineScreen(
@@ -610,6 +611,7 @@ private fun GalleryContent(
             onPrivate = onPrivate,
             onMap = onMap,
             onPeople = onPeople,
+            onSettings = onSettings,
         )
         GalleryDestination.Albums -> AlbumsScreen(
             items = items,
@@ -635,6 +637,7 @@ private fun GalleryContent(
             onOpenPrivate = onOpenPrivate,
             onMap = onMap,
             onPeople = onPeople,
+            onSettings = onSettings,
         )
         GalleryDestination.Memories -> MemoriesScreen(items, onOpen, slideshowSeconds)
         GalleryDestination.Create -> CreateScreen(
@@ -652,7 +655,6 @@ private fun GalleryRail(
     selected: GalleryDestination,
     expanded: Boolean,
     onDestination: (GalleryDestination) -> Unit,
-    onSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -664,18 +666,6 @@ private fun GalleryRail(
     ) {
         GalleryDestination.entries.forEach { destination ->
             RailItem(destination, destination == selected, expanded) { onDestination(destination) }
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Row(
-            modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(14.dp)).clickable(onClick = onSettings)
-                .padding(horizontal = 12.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(GalleryIcons.Settings, stringResource(R.string.settings), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            if (expanded) {
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(stringResource(R.string.settings), color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
         }
     }
 }
