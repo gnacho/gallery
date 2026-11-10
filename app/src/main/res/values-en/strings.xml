@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Kotlin Gallery</string>
+    <string name="back">Back</string>
+    <string name="retry">Retry</string>
+    <string name="permission_title">Allow access to your photos</string>
+    <string name="permission_message">Gallery needs access to your images and videos to show your content. You can grant it again from this button.</string>
+    <string name="empty_title">No photos or videos</string>
+    <string name="empty_message">Content available in MediaStore will appear here.</string>
+    <string name="loading">Loading your gallery</string>
+    <string name="media_load_error">Could not read content. Check permissions and try again.</string>
+    <string name="undated">No date</string>
+    <string name="album_items">%1$d items</string>
+    <string name="photo_thumbnail">Thumbnail of %1$s</string>
+    <string name="video_duration">Video duration</string>
+    <string name="photos">Photos</string>
+    <string name="gallery">Gallery</string>
+    <string name="memories">Memories</string>
+    <string name="create">Create</string>
+    <string name="albums">Albums</string>
+    <string name="memories_empty">No memories have been generated on this device.</string>
+    <string name="create_empty">Creation tools will be added with their functional tests.</string>
+
+    <!-- Common -->
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="name">Name</string>
+    <string name="more">More</string>
+    <string name="close">Close</string>
+    <string name="share">Share</string>
+    <string name="edit">Edit</string>
+    <string name="rename">Rename</string>
+    <string name="settings">Settings</string>
+    <string name="item_selected">Selected</string>
+    <string name="move_to_private">Move to private</string>
+    <string name="delete_permanently">Delete permanently</string>
+
+    <!-- Picker -->
+    <string name="picker_select_multiple">Select photos and videos</string>
+    <string name="picker_select_single">Select an item</string>
+    <string name="picker_select_continue">Select to continue</string>
+    <string name="picker_confirm">Confirm %1$d</string>
+    <string name="picker_need_access">Access to your photos is needed</string>
+    <string name="picker_no_items">No items</string>
+
+    <!-- Albums -->
+    <string name="album_favorites">Favorites</string>
+    <string name="album_private">Private</string>
+    <string name="album_trash">Trash</string>
+    <string name="album">Album</string>
+    <string name="empty_trash">Empty trash</string>
+    <string name="rename_album">Rename %1$s</string>
+    <string name="delete_album_named">Delete album %1$s</string>
+    <string name="hide_album">Hide %1$s</string>
+    <string name="unnamed_album">No album</string>
+    <string name="no_albums_title">No albums</string>
+    <string name="no_albums_message">Albums are created from your image and video folders.</string>
+
+    <!-- Map -->
+    <string name="map">Map</string>
+    <string name="located_count">%1$d located</string>
+    <string name="no_location_photos">No photos with EXIF coordinates</string>
+    <string name="cluster_near">%1$d items near %2$.4f, %3$.4f</string>
+
+    <!-- People -->
+    <string name="people">People</string>
+    <string name="faces_count">%1$d faces</string>
+    <string name="people_help">On-device face detection. Assign a name to create each album.</string>
+    <string name="no_faces">No faces detected in your photos</string>
+    <string name="faces_group">%1$s · %2$d</string>
+    <string name="unnamed_faces_count">Unnamed faces · %1$d</string>
+    <string name="name_person">Name person</string>
+    <string name="name_action">Name</string>
+
+    <!-- Settings -->
+    <string name="dynamic_color">Dynamic color</string>
+    <string name="dynamic_color_subtitle">Use system colors while keeping the dark theme.</string>
+    <string name="show_videos">Show videos in Photos</string>
+    <string name="show_videos_subtitle">Videos stay available in their albums even when hidden here.</string>
+    <string name="slideshow_interval">Slideshow interval</string>
+    <string name="slideshow_seconds">%1$d seconds per image</string>
+    <string name="hidden_albums">Hidden albums</string>
+    <string name="no_hidden_albums">No hidden albums.</string>
+    <string name="hidden_album_item">Album %1$d</string>
+    <string name="unhide_album">Show album %1$d</string>
+
+    <!-- Year in review -->
+    <string name="annual_summary">Year in review</string>
+    <string name="back_to_memories">Back to Memories</string>
+    <string name="no_dates_title">No dates available</string>
+    <string name="no_dates_message">No dated items to build a year in review.</string>
+    <string name="images_count">%1$d images</string>
+    <string name="videos_count">%1$d videos</string>
+    <string name="favorites_count">%1$d favorites</string>
+    <string name="months_count">%1$d months</string>
+
+    <!-- Video editor -->
+    <string name="close_video_editor">Close video editor</string>
+    <string name="trim_video">Trim video</string>
+    <string name="video_duration_unknown">Could not determine video duration</string>
+    <string name="video_trim_range">Start %1$s   End %2$s   Duration %3$s</string>
+    <string name="save_trim_copy">Save trim as copy</string>
+    <string name="exporting">Exporting…</string>
+    <string name="trim_save_error">Could not save the trim: %1$s</string>
+    <string name="trim_error">Could not trim: %1$s</string>
+    <string name="trim_start_error">Could not start the trim: %1$s</string>
+
+    <!-- Viewer -->
+    <string name="end_compare">End comparison</string>
+    <string name="details">Details</string>
+    <string name="favorite">Favorite</string>
+    <string name="trim">Trim</string>
+    <string name="restore">Restore</string>
+    <string name="stop_slideshow">Stop slideshow</string>
+    <string name="slideshow">Slideshow</string>
+    <string name="compare_next">Compare with next</string>
+    <string name="set_wallpaper">Set as wallpaper</string>
+    <string name="wallpaper_failed">Could not open the wallpaper picker</string>
+    <string name="print">Print</string>
+    <string name="print_failed">Could not start printing</string>
+    <string name="open_with">Open with</string>
+    <string name="no_compatible_app">No compatible app</string>
+    <string name="duplicate">Duplicate</string>
+    <string name="edit_note">Edit note</string>
+    <string name="note_title">Photo note</string>
+    <string name="searchable_text">Searchable text</string>
+    <string name="speed_x">Speed %1$sx</string>
+    <string name="type">Type</string>
+    <string name="size">Size</string>
+    <string name="dimensions">Dimensions</string>
+    <string name="duration">Duration</string>
+    <string name="file_location">File location</string>
+    <string name="trash_retention">Trash retention</string>
+    <string name="expired_mediastore">Expired per MediaStore</string>
+    <string name="days_remaining">%1$d days remaining</string>
+    <string name="coordinates">Coordinates</string>
+    <string name="histogram">Luminance histogram</string>
+
+    <!-- Private vault -->
+    <string name="vault_unlock_title">Unlock private vault</string>
+    <string name="vault_unlock_subtitle">Confirm your identity to view the content</string>
+    <string name="vault_exit">Leave vault</string>
+    <string name="vault_empty_title">The vault is empty</string>
+    <string name="vault_empty_message">Move items here from the selection or the viewer.</string>
+    <string name="vault_private_video">Private video</string>
+    <string name="vault_delete_confirm">The only encrypted copy of %1$s will be deleted.</string>
+    <string name="vault_item_restored">Item restored</string>
+    <string name="vault_restore_failed">Could not restore</string>
+    <string name="vault_delete">Delete</string>
+    <string name="vault_item_deleted">Private item deleted</string>
+
+    <!-- Timeline / search -->
+    <string name="search">Search</string>
+    <string name="search_placeholder">Name, album, type, year or note</string>
+    <string name="cancel_selection">Cancel selection</string>
+    <string name="select_all">Select all</string>
+    <string name="favorites">Favorites</string>
+    <string name="move_to_trash">Move to trash</string>
+    <string name="create_album">Create album</string>
+    <string name="move_to_album">Move to album</string>
+    <string name="copy_to_album">Copy to album</string>
+    <string name="no_results_title">No results</string>
+    <string name="no_results_message">Try another name, album, type or year.</string>
+
+    <!-- Memories and create -->
+    <string name="memory_of_year">Memory from %1$d</string>
+    <string name="no_memories_title">No memories yet</string>
+    <string name="no_memories_message">Photos and videos from this same day in previous years will appear here.</string>
+    <string name="on_this_day">On this day</string>
+    <string name="play_memory">Play memory</string>
+    <string name="close_slideshow">Close slideshow</string>
+    <string name="instant_movie">Instant movie</string>
+    <string name="create_help">Select items in Photos by long-pressing a thumbnail. Creations are saved as new copies.</string>
+    <string name="collage">Collage</string>
+    <string name="collage_desc">Combine 2 to 9 images into a 1600 x 1600 square composition.</string>
+    <string name="saving">Saving…</string>
+    <string name="create_collage">Create collage</string>
+    <string name="collage_saved">Collage saved to Pictures/Galeria</string>
+    <string name="collage_error">Could not create the collage: %1$s</string>
+    <string name="image_edit">Image editing</string>
+    <string name="image_edit_desc">Rotate, flip and adjust filter, brightness and contrast without modifying the original.</string>
+    <string name="edit_image">Edit image</string>
+    <string name="image_to_video">Image to video</string>
+    <string name="image_to_video_desc">Export the selected images as MP4, four seconds per image, without altering the originals.</string>
+    <string name="export_mp4">Export MP4</string>
+    <string name="video_saved">Video saved to Movies/Galeria</string>
+    <string name="video_import_error">Could not import the video: %1$s</string>
+    <string name="video_export_error">Could not export the video: %1$s</string>
+    <string name="instant_slideshow">Instant slideshow</string>
+    <string name="instant_slideshow_desc">Plays a slideshow of four seconds per item.</string>
+    <string name="play">Play</string>
+    <string name="video_editor">Video editor</string>
+    <string name="video_editor_desc">Trim the start and end and save an MP4 copy without modifying the original.</string>
+    <string name="ai_notice">AI video generation and the photo community depend on private MagicOS services and are not simulated as local features.</string>
+
+    <!-- Image editor -->
+    <string name="close_editor">Close editor</string>
+    <string name="reset">Reset</string>
+    <string name="save_copy">Save copy</string>
+    <string name="edit_preview">Edited preview</string>
+    <string name="draw_red_hint">Drag to draw in red</string>
+    <string name="mosaic_hint">Drag a rectangle to pixelate</string>
+    <string name="brightness">Brightness</string>
+    <string name="contrast">Contrast</string>
+    <string name="saturation">Saturation</string>
+    <string name="warmth">Warmth</string>
+    <string name="filter_original">Original</string>
+    <string name="filter_mono">Mono</string>
+    <string name="filter_sepia">Sepia</string>
+    <string name="filter_vivid">Vivid</string>
+    <string name="filter_intensity">Filter intensity</string>
+    <string name="rotate">Rotate</string>
+    <string name="flip">Flip</string>
+    <string name="crop">Crop</string>
+    <string name="crop_index">Crop %1$d</string>
+    <string name="text_tool">Text</string>
+    <string name="draw_tool">Draw</string>
+    <string name="mosaic_tool">Mosaic</string>
+    <string name="border">Border</string>
+    <string name="watermark">Watermark</string>
+    <string name="lunar_night">Lunar night</string>
+    <string name="add_text">Add text</string>
+    <string name="text_on_image">Text on image</string>
+    <string name="add">Add</string>
+    <string name="watermark_dialog">Watermark</string>
+    <string name="watermark_text_label">Watermark text</string>
+    <string name="apply">Apply</string>
+
+    <!-- Album dialogs (GalleryApp) -->
+    <string name="destination_album_name">Destination album name</string>
+    <string name="invalid_album_name">The album name is not valid</string>
+    <string name="move">Move</string>
+    <string name="copy">Copy</string>
+    <string name="new_album">New album</string>
+    <string name="rename_album_dialog">Rename album</string>
+    <string name="album_name_label">Album name</string>
+    <string name="album_updated">Album updated</string>
+    <string name="delete_album">Delete album</string>
+    <string name="delete_album_confirm">The %1$s grouping will be removed. No photo or video will be deleted.</string>
+    <string name="album_deleted">Album deleted. Items remain in their folders</string>
+
+    <!-- Operation messages (GalleryApp) -->
+    <string name="rename_failed">Could not rename</string>
+    <string name="moved_to_album">%1$d items moved to %2$s</string>
+    <string name="move_failed">Could not move the items</string>
+    <string name="operation_confirmed">Operation confirmed</string>
+    <string name="moved_to_private">Moved to private vault</string>
+    <string name="operation_cancelled_no_move">Operation cancelled. No item was moved</string>
+    <string name="operation_cancelled">Operation cancelled</string>
+    <string name="copy_created">Copy created</string>
+    <string name="duplicate_failed">Could not duplicate</string>
+    <string name="write_access_failed">Could not request write access</string>
+    <string name="copied_to_album">Copied to %1$s</string>
+    <string name="copy_failed">Could not copy the items</string>
+    <string name="import_vault_failed">Could not import to the private vault</string>
+    <string name="delete_originals_failed">Could not request deletion of the originals</string>
+    <string name="vault_lock_required">Set up a screen lock to use the private vault</string>
+    <string name="auth_open_failed">Could not open device authentication</string>
+    <string name="vault_unlock_failed">Could not unlock the private vault: %1$s</string>
+    <string name="trim_saved">Trim saved to Movies/Galeria</string>
+    <string name="edit_copy_saved">Edited copy saved</string>
+    <string name="note_deleted">Note deleted</string>
+    <string name="note_saved">Note saved</string>
+
+    <!-- MainActivity -->
+    <string name="import_shared_failed">Could not import the shared items</string>
+    <string name="open_shared_failed">Could not open the shared items</string>
+
+    <!-- Widget -->
+    <string name="widget_no_photos">No photos available</string>
+    <string name="widget_grant_access">Open Gallery to grant access to your photos</string>
+
+    <!-- EXIF details -->
+    <string name="exif_date_original">Original date</string>
+    <string name="exif_make">Make</string>
+    <string name="exif_model">Model</string>
+    <string name="exif_iso">ISO</string>
+    <string name="exif_exposure">Exposure</string>
+    <string name="exif_aperture">Aperture</string>
+    <string name="exif_focal_length">Focal length</string>
+    <string name="exif_white_balance">White balance</string>
+    <string name="exif_flash">Flash</string>
+    <string name="exif_software">Software</string>
+</resources>

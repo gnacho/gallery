@@ -10,7 +10,7 @@
 // Uso: node tools/verify-i18n.mjs [--list]
 //   --list  imprime las violaciones con fichero:linea y no cambia el exit code
 
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = new URL("..", import.meta.url).pathname;
@@ -130,14 +130,59 @@ function rel(p) {
   return p.startsWith(SRC) ? p.slice(SRC.length + 1) : p;
 }
 
+// Completitud de locales: cada clave del locale por defecto (values/) debe
+// existir en cada locale extra (values-en/, ...) y con los mismos argumentos
+// posicionales. Evita introducir una clave ES sin su traducción.
+function localeKeys(xmlPath) {
+  const txt = readFileSync(xmlPath, "utf8");
+  const out = {};
+  const re = /<string name="([^"]+)"[^>]*>([^<]*)<\/string>/g;
+  let m;
+  while ((m = re.exec(txt)) !== null) {
+    out[m[1]] = (m[2].match(/%[0-9]+\$[a-z.]/g) || []).sort().join(",");
+  }
+  return out;
+}
+
+function missingLocales() {
+  const base = join(ROOT, "app", "src", "main", "res");
+  const valuesDir = join(base, "values");
+  const defaultKeys = localeKeys(join(valuesDir, "strings.xml"));
+  const problems = [];
+  for (const e of readdirSync(base)) {
+    if (!e.startsWith("values-") || !statSync(join(base, e)).isDirectory()) continue;
+    const f = join(base, e, "strings.xml");
+    if (!existsSync(f)) {
+      problems.push(`${e}: falta strings.xml`);
+      continue;
+    }
+    const keys = localeKeys(f);
+    for (const k of Object.keys(defaultKeys)) {
+      if (!(k in keys)) problems.push(`${e}: falta la clave ${k}`);
+      else if (keys[k] !== defaultKeys[k]) problems.push(`${e}: args desalineados en ${k} (${keys[k]} vs ${defaultKeys[k]})`);
+    }
+    for (const k of Object.keys(keys)) {
+      if (!(k in defaultKeys)) problems.push(`${e}: clave extra ${k}`);
+    }
+  }
+  return problems;
+}
+
 if (list) {
   for (const f of files) console.log(f);
   console.log(`\n${violations} violaciones (modo lista, sin fallo)`);
 } else {
-  if (violations > 0) {
-    console.error(`I18N_FAIL: ${violations} textos de cara al usuario hardcodeados:`);
-    for (const f of files.slice(0, 200)) console.error("  " + f);
+  const localeProblems = missingLocales();
+  if (violations > 0 || localeProblems.length > 0) {
+    if (violations > 0) {
+      console.error(`I18N_FAIL: ${violations} textos de cara al usuario hardcodeados:`);
+      for (const f of files.slice(0,200)) console.error("  " + f);
+    }
+    if (localeProblems.length > 0) {
+      console.error(`I18N_FAIL: ${localeProblems.length} desajustes de locales:`);
+      for (const p of localeProblems) console.error("  " + p);
+    }
     process.exit(1);
   }
-  console.log("I18N_OK: 0 textos de cara al usuario hardcodeados");
+  console.log("I18N_OK: 0 textos hardcodeados, locales completos y alineados");
 }

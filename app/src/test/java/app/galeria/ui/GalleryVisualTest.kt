@@ -23,7 +23,7 @@ import java.io.File
 import java.time.ZoneId
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [35], qualifiers = "w724dp-h784dp-xxhdpi")
+@Config(sdk = [35], qualifiers = "es-w724dp-h784dp-xxhdpi")
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class GalleryVisualTest {
     @get:Rule
